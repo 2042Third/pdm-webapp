@@ -7,7 +7,8 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "build_wasm": "node assets/encryption/scripts/compile-wasm.cjs && node assets/encryption/scripts/wasm-cache-busting.cjs"
   },
   "dependencies": {
     "flowbite": "^2.3.0",
