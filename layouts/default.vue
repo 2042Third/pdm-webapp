@@ -1,7 +1,10 @@
 <template>
-  <div>
-    <AppHeader />
-    <slot />
+    <AppHeader>
+      <slot />
+    </AppHeader>
+
     <AppFooter />
-  </div>
 </template>
+
+<script setup>
+</script>

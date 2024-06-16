@@ -5,9 +5,15 @@ export default defineNuxtConfig({
     "@": resolve(__dirname, "/"),
   },
   css:[
-    '@/assets/main.css',
+    '~/assets/main.scss',
   ],
   devtools: { enabled: true },
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+    },
+  },
   app: {
     pageTransition: { name: 'page', mode: 'out-in' }
   },

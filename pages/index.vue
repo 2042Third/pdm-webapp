@@ -1,22 +1,13 @@
 <template>
   <div>
-    <h1>Welcome to the homepage</h1>
-    <header>
-      <nav>
-        <ul>
-          <li><NuxtLink to="/about">About</NuxtLink></li>
-          <li><NuxtLink to="/notes">Notes</NuxtLink></li>
-          <li><NuxtLink to="/chat">Chat</NuxtLink></li>
-          <li><NuxtLink to="/user">User</NuxtLink></li>
-        </ul>
-      </nav>
-    </header>
+    <h1 class="text-4xl" >Welcome to the homepage</h1>
+
 
     <AppAlert>
       This is an auto-imported component.
     </AppAlert>
-
-
+    <hr/>
+    {{ $hello('world') }}
     <img src="/img/cmu.png" alt="Discover Nuxt 3" />
   </div>
 </template>
@@ -29,7 +20,8 @@
       ogDescription: 'This is my amazing site, let me tell you all about it.',
       ogImage: 'https://example.com/image.png',
       twitterCard: 'summary_large_image',
-    })
+    });
+    console.log('Hello from the homepage');
 </script>
 
 <style>
