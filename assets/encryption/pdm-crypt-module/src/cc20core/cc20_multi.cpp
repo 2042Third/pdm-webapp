@@ -355,6 +355,7 @@ void Cc20::rd_file_encr(const uint8_t * buf, uint8_t* outstr,  size_t input_leng
  * -- move to namespace
  * */
 void Cc20::display_progress(size_t n, const size_t* progress_bar, int THREAD_COUNT) {
+#ifndef WEB_RELEASE
   const unsigned int bar_width = 50;
   const unsigned int update_interval = 100000; // 100ms
 
@@ -406,6 +407,7 @@ void Cc20::display_progress(size_t n, const size_t* progress_bar, int THREAD_COU
   } while (total_progress+10 < n);
 
   std::cout << std::endl;
+#endif
 }
 
 /*
@@ -450,6 +452,7 @@ void Cc20::worker::multi_enc_pthrd() {
 
 
 #endif // __linux__
+#ifndef SINGLETHREADING
   if (coreId!=-1) {
     // Set the affinity of the thread to the specified core
     thread_affinity_policy_data_t policy = { (int)coreId };
@@ -458,7 +461,7 @@ void Cc20::worker::multi_enc_pthrd() {
                       (thread_policy_t)&policy,
                       THREAD_AFFINITY_POLICY_COUNT);
   }
-
+#endif // SINGLETHREADING
 #ifdef VERBOSE
   cout<<"[calc] "<<thrd<<" locks, starting write " << endl;
 #endif
@@ -603,7 +606,9 @@ Cc20::Cc20(int _thread_count_): THREAD_COUNT(_thread_count_){
 #ifdef VERBOSE
   cout<<"[Cc20 Constructor] _thread_count_ = "<<_thread_count_<<" . " << endl;
 #endif
+#ifndef WEB_RELEASE
   threads.resize(THREAD_COUNT);
+#endif // WEB_RELEASE
   writing_track.resize(THREAD_COUNT);
   progress_bar.resize(THREAD_COUNT);
   arg_ptr.resize(THREAD_COUNT);
