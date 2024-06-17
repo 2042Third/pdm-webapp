@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     '~/assets/main.scss',
   ],
   devtools: { enabled: true },
+  plugins: ['~/plugins/wasm'],
   postcss: {
     plugins: {
       tailwindcss: {},
