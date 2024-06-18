@@ -38,9 +38,22 @@
               Notes
             </NuxtLink>
           </li>
+
           <li>
             <NuxtLink to="/chat" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
               Chat
+            </NuxtLink>
+          </li>
+
+          <li>
+            <NuxtLink to="/tools" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+              Tools
+            </NuxtLink>
+          </li>
+
+          <li>
+            <NuxtLink to="/about" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+              About
             </NuxtLink>
           </li>
 
@@ -51,10 +64,11 @@
           </li>
 
           <li>
-            <NuxtLink to="/about" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-              About
+            <NuxtLink to="/settings" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+              Settings
             </NuxtLink>
           </li>
+
         </ul>
       </div>
     </aside>
