@@ -26,7 +26,7 @@
             </NuxtLink>
           </li>
           <li>
-            <NuxtLink  to="/" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+            <NuxtLink  to="/webapp/" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
 
               Home
             </NuxtLink>
@@ -34,37 +34,37 @@
 
 
           <li>
-            <NuxtLink to="/notes" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+            <NuxtLink to="/webapp/notes" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
               Notes
             </NuxtLink>
           </li>
 
           <li>
-            <NuxtLink to="/chat" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+            <NuxtLink to="/webapp/chat" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
               Chat
             </NuxtLink>
           </li>
 
           <li>
-            <NuxtLink to="/tools" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+            <NuxtLink to="/webapp/tools" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
               Tools
             </NuxtLink>
           </li>
 
           <li>
-            <NuxtLink to="/about" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+            <NuxtLink to="/webapp/about" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
               About
             </NuxtLink>
           </li>
 
           <li>
-            <NuxtLink to="/user" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+            <NuxtLink to="/webapp/user" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
               User
             </NuxtLink>
           </li>
 
           <li>
-            <NuxtLink to="/settings" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+            <NuxtLink to="/webapp/settings" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
               Settings
             </NuxtLink>
           </li>
