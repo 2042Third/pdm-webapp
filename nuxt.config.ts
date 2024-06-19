@@ -2,6 +2,9 @@
 import {resolve} from "path";
 export default defineNuxtConfig({
   ssr: true,
+  router: {
+    base: '/webapp/'
+  },
   alias: {
     "@": resolve(__dirname, "/"),
   },
