@@ -1,11 +1,17 @@
 // plugins/wasm.ts
 export default defineNuxtPlugin(async (nuxtApp) => {
-  // const { default: Module } = await import('~/assets/encryption/wasm/notes.cjs');
-  // const { default: Module } = await import('/wasm/notes.cjs');
-  // const moduleInstance = await Module();
+  let createWasmModule;
 
+  if (import.meta.dev) {
+    // Running on the local dev server
+    const { default: devCreateWasmModule } = await import('~/public/wasm/notes.cjs');
+    createWasmModule = devCreateWasmModule;
+  } else {
+    // Running on the real server
+    const { default: prodCreateWasmModule } = await import('/wasm/notes.cjs');
+    createWasmModule = prodCreateWasmModule;
+  }
 
-  const { default: createWasmModule } = await import('~/public/wasm/notes.cjs');
   const moduleInstance = await createWasmModule();
   return {
     provide: {
