@@ -32,12 +32,14 @@
       >Encryption Password</label>
       <CommonInputS id="enc-pass" v-model="encPass" placeholder="1234"
                     type="text" class=" mb-5"
+                    :on-clear="() => encPass = ''"
       />
 
       <label for="enc-plain" class="block mb-5 text-sm font-medium text-gray-900 dark:text-white"
       >Plaintext</label>
       <CommonInputS id="enc-plain" v-model="encPlain" placeholder="Enter text"
                     type="text" class=" mb-5 "
+                    :on-clear="() => encPlain = ''"
       />
       <button @click="encrypt" class="text-white  mb-5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >Encrypt</button>
@@ -55,12 +57,14 @@
       >Decryption Password</label>
       <CommonInputS id="dec-pass" v-model="decPass" placeholder="1234"
                     type="text" class=" mb-5"
+                    :on-clear="() => decPass = ''"
       />
 
       <label for="dec-cipher" class="block mb-5 text-sm font-medium text-gray-900 dark:text-white"
       >Ciphertext</label>
       <CommonInputS id="dec-cipher" v-model="decCipher" placeholder="Enter text"
                     type="text" class=" mb-5"
+                    :on-clear="() => decCipher = ''"
       />
       <button @click="decrypt" class="text-white  mb-5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >Decrypt</button>
@@ -70,20 +74,32 @@
       <ClipBoard :content="decrypted" />
 
     </div>
+
     <div class="mb-6">
       <label class="block mb-5 text-lg font-bold text-gray-900 dark:text-white"
-      > Key Generation  </label>
-
-      <button @click="generateKeyPDM" class="text-white  mb-5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-      >Generate</button>
+      > WASM Runtime Secure Crypto Context </label>
+      <CommonInputS id="context-pass" v-model="contextPass" placeholder="1234"
+                    type="text" class=" mb-5"
+                    :on-clear="() => contextPass = ''"
+      />
+      <button @click="createContext" class="text-white  mb-5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+      >Create</button>
 
       <label class="block mb-5 text-sm font-medium text-gray-900 dark:text-white"
       >Generated Key</label>
-      <p
-      >
-        Key Length: {{haxStrToBinarySize(generatedKeyPDM)}} bits
+      <p>
+        Context Handle: {{userStore.contextHandle}}
       </p>
-      <ClipBoard :content="generatedKeyPDM" />
+      <label for="context-plain" class="block mb-5 text-sm font-medium text-gray-900 dark:text-white"
+      >Plaintext</label>
+      <CommonInputS id="context-plain" v-model="contextPlain" placeholder="Enter text"
+                    type="text" class=" mb-5 "
+                    :on-clear="() => contextPlain = ''"
+      />
+      <button @click="contextEncrypt" class="text-white  mb-5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+      >Encrypt</button>
+
+      <ClipBoard :content="contextEncrypted" />
 
     </div>
 
@@ -120,6 +136,19 @@ function generateKeyPDM() {
 }
 function haxStrToBinarySize(hexStr: string) {
   return hexStr.length * 4;
+}
+
+const userStore = useUserStore();
+const contextPass = ref('1234');
+const contextPlain = ref('Some text to encrypt');
+const contextEncrypted = ref('');
+function createContext () {
+  const ctx = nuxtApp.$wasm.create_context(contextPass.value);
+  console.log("new = "+ ctx);
+  userStore.setContextHandle(ctx);
+}
+function contextEncrypt() {
+  contextEncrypted.value = nuxtApp.$wasm.encrypt(userStore.contextHandle, contextPlain.value);
 }
 
 

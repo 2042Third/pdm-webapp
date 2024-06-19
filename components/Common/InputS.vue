@@ -50,7 +50,7 @@ export default {
     },
     onClear: {
       type: Function,
-      default: null,
+      default: ()=>console.log("onClear not defined."),
     },
   },
   emits: ['update:modelValue'],

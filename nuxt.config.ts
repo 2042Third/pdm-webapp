@@ -8,7 +8,13 @@ export default defineNuxtConfig({
   css:[
     '~/assets/main.scss',
   ],
-  devtools: { enabled: true },
+  devtools: {
+    enabled: true,
+
+    timeline: {
+      enabled: true,
+    },
+  },
   plugins: ['~/plugins/wasm'],
   postcss: {
     plugins: {
