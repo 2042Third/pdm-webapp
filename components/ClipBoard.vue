@@ -7,7 +7,11 @@ const props = defineProps({
   content: {
     type: String,
     default: ''
-  }
+  },
+  rows: {
+    type: Number,
+    default: 2
+  },
 })
 
 const input = computed(() => props.content.trim())
@@ -27,21 +31,25 @@ const copyContent = () => {
 
 <template>
   <ClientOnly>
-    <template #default>
-      <div v-if="isSupported">
-        <textarea :value="input" rows="5" cols="50"
-                  class=" mb-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  readonly></textarea>
-        <button
+    <template #default >
+      <div v-if="isSupported" class="flex flex-row gap-2" >
+        <UTextarea
+            :value="input"
+            :rows="rows"
+            cols="50"
+            class="w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            readonly
+        ></UTextarea>
+        <UButton
             @click="copyContent"
             :class="{
-              'bg-green-500 text-white': isCopied,
-              'bg-blue-500 text-white': !isCopied,
+              'bg-green-500  text-white': isCopied,
+              'bg-blue-500 hover:bg-blue-800 text-white': !isCopied,
             }"
-            class="px-4 py-2 rounded-lg "
+            class="px-4 py-2 rounded-lg basis-1/5 place-content-center"
         >
           {{ isCopied ? 'Copied!' : 'Copy' }}
-        </button>
+        </UButton>
       </div>
       <p v-else>Your browser does not support Clipboard API</p>
     </template>

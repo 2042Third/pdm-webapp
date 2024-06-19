@@ -9,14 +9,15 @@
         :autocomplete="autocomplete"
         v-bind="$attrs"
         :ui="{ icon: { trailing: { pointer: '' } } }"
+        class="input-wrapper"
     >
       <template v-if="modelValue" #trailing>
         <UButton
             color="gray"
             variant="link"
-
             :padded="false"
             @click="onClear"
+            class="clear-button"
         >
           <IconsClose/>
         </UButton>
@@ -50,10 +51,21 @@ export default {
     },
     onClear: {
       type: Function,
-      default: ()=>console.log("onClear not defined."),
+      default: () => console.log("onClear not defined."),
     },
   },
   emits: ['update:modelValue'],
-
 };
 </script>
+
+<style scoped>
+.input-wrapper :deep(input) {
+  height: 100%;
+}
+
+.clear-button {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+</style>
