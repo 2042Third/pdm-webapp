@@ -8,6 +8,7 @@ const rootDir = path.resolve(__dirname, "../../../");
 const ensureWasmOutputDirExists = () => {
   console.log("Preparing wasm output folder...\n");
 
+  // const src = path.resolve(rootDir, "public/wasm");
   const src = path.resolve(rootDir, "assets/encryption/wasm");
   if (fs.existsSync(src)) {
     const files = fs.readdirSync(src);

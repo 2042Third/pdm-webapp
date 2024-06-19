@@ -16,6 +16,7 @@ const generateChecksum = (str, algorithm, encoding) =>
 
 const result = {};
 
+// const wasmDir = path.resolve(rootDir, "public/wasm");
 const wasmDir = path.resolve(rootDir, "assets/encryption/wasm");
 for (let item of fs.readdirSync(wasmDir)) {
   const itemPath = path.join(wasmDir, item);
