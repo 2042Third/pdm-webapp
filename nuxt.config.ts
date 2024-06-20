@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import {resolve} from "path";
 export default defineNuxtConfig({
-  ssr: false,
+  ssr: true,
 
   router: {
     base: '/webapp/'
@@ -33,4 +33,17 @@ export default defineNuxtConfig({
     '@pinia/nuxt'
     , "@nuxt/ui"
   ],
+
+  hooks: {
+    'build:compiled': async (generator) => {
+      const fs = require('fs').promises;
+      const path = require('path');
+
+      const sourceFile = path.join(generator.nuxt.options.buildDir, 'public/wasm/notes.wasm');
+      const destinationFile = path.join(generator.nuxt.options.buildDir, 'server/notes.wasm');
+
+      await fs.copyFile(sourceFile, destinationFile);
+      console.log('Copied notes.wasm to server directory');
+    },
+  },
 })
