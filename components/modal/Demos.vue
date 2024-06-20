@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useCounterStore } from '@/store/myStore'
 
 const isOpen = ref(false)
 const items = [
