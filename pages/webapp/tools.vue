@@ -1,154 +1,147 @@
 <template>
-  <div class="grid gap-6 mb-6 md:grid-cols-2">
-        <div class="flex flex-col mb-6 p-4 gap-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-          <label for="hash-input" class="block text-lg font-bold text-gray-900 dark:text-white">
-            SHA3 Hash Function
-          </label>
-          <label for="enc-pass" class="block text-sm font-medium text-gray-900 dark:text-white">
-            Plaintext
-          </label>
-          <ContainerColumnSplit45>
-            <template #left>
-              <CommonInputS
-                  id="hash-input"
-                  v-model="inputText"
-                  placeholder="Enter text"
-                  type="text"
-                  class="h-9 basis-4/5"
-                  :on-clear="() => inputText = ''"
-              />
-            </template>
-            <template #right>
-              <UButton @click="calculateHash" class="text-white place-content-center h-9 basis-1/5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                Calculate
-              </UButton>
-            </template>
-          </ContainerColumnSplit45>
-
-
-          <label class="block text-sm font-medium text-gray-900 dark:text-white">
-            Generated Hash
-          </label>
-          <ClipBoard :content="hash" />
-        </div>
-
-        <div class="flex flex-col mb-6 p-4 gap-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-          <label for="enc-pass" class="block text-lg font-bold text-gray-900 dark:text-white">
-            Encryption
-          </label>
-          <label for="enc-pass" class="block text-sm font-medium text-gray-900 dark:text-white">
-            Encryption Password
-          </label>
-          <CommonInputS id="enc-pass" v-model="encPass" placeholder="1234"
-                        type="text" class="h-9"
-                        :on-clear="() => encPass = ''"
+  <div class="flex flex-col  gap-6 mb-6 justify-center items-center">
+    <CommonContainerDotted class="flex max-w-prose flex-col gap-4">
+      <label for="hash-input" class="block text-lg font-bold text-gray-900 dark:text-white">
+        SHA3 Hash Function
+      </label>
+      <label for="enc-pass" class="block text-sm font-medium text-gray-900 dark:text-white">
+        Plaintext
+      </label>
+      <ContainerColumnSplit45>
+        <template #left>
+          <CommonInputS
+              id="hash-input"
+              v-model="inputText"
+              placeholder="Enter text"
+              type="text"
+              class="h-9 basis-4/5"
+              :on-clear="() => inputText = ''"
           />
-          <label for="enc-plain" class="block text-sm font-medium text-gray-900 dark:text-white">
-            Plaintext
-          </label>
-          <div class="flex flex-row gap-2">
-            <CommonInputS id="enc-plain" v-model="encPlain" placeholder="Enter text"
-                          type="text" class="h-9 basis-4/5"
-                          :on-clear="() => encPlain = ''"
-            />
-            <UButton @click="encrypt" class="text-white place-content-center h-9 basis-1/5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-              Encrypt
-            </UButton>
-          </div>
-          <label class="block text-sm font-medium text-gray-900 dark:text-white">
-            Encrypted Text
-          </label>
-          <ClipBoard :content="encrypted" />
-        </div>
+        </template>
+        <template #right>
+          <UButton @click="calculateHash"
+                   class="text-white place-content-center h-9 basis-1/5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            Calculate
+          </UButton>
+        </template>
+      </ContainerColumnSplit45>
 
-        <div class="flex flex-col mb-6 p-4 gap-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-          <label for="dec-pass" class="block text-lg font-bold text-gray-900 dark:text-white">
-            Decryption
-          </label>
-          <label for="dec-pass" class="block text-sm font-medium text-gray-900 dark:text-white">
-            Decryption Password
-          </label>
-          <CommonInputS id="dec-pass" v-model="decPass" placeholder="1234"
-                        type="text" class="h-9"
-                        :on-clear="() => decPass = ''"
-          />
-          <label for="dec-cipher" class="block text-sm font-medium text-gray-900 dark:text-white">
-            Ciphertext
-          </label>
-          <div class="flex flex-row gap-2">
-            <CommonInputS id="dec-cipher" v-model="decCipher" placeholder="Enter text"
-                          type="text" class="h-9 basis-4/5"
-                          :on-clear="() => decCipher = ''"
-            />
-            <UButton @click="decrypt" class="text-white place-content-center h-9 basis-1/5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-              Decrypt
-            </UButton>
-          </div>
-          <label for="decrypted-text" class="block text-sm font-medium text-gray-900 dark:text-white">
-            Decrypted Text
-          </label>
-          <ClipBoard id="decrypted-text" :content="decrypted" />
-        </div>
+      <label class="block text-sm font-medium text-gray-900 dark:text-white">
+        Generated Hash
+      </label>
+      <ClipBoard :content="hash"/>
+    </CommonContainerDotted>
 
+    <CommonContainerDotted class="flex max-w-prose flex-col gap-4">
+      <label for="enc-pass" class="block text-lg font-bold text-gray-900 dark:text-white">
+        Encryption
+      </label>
+      <label for="enc-pass" class="block text-sm font-medium text-gray-900 dark:text-white">
+        Encryption Password
+      </label>
+      <CommonInputS id="enc-pass" v-model="encPass" placeholder="1234"
+                    type="text" class="h-9"
+                    :on-clear="() => encPass = ''"
+      />
+      <label for="enc-plain" class="block text-sm font-medium text-gray-900 dark:text-white">
+        Plaintext
+      </label>
+      <div class="flex flex-row gap-2">
+        <CommonInputS id="enc-plain" v-model="encPlain" placeholder="Enter text"
+                      type="text" class="h-9 basis-4/5"
+                      :on-clear="() => encPlain = ''"
+        />
+        <UButton @click="encrypt" class="text-white place-content-center h-9 basis-1/5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          Encrypt
+        </UButton>
+      </div>
+      <label class="block text-sm font-medium text-gray-900 dark:text-white">
+        Encrypted Text
+      </label>
+      <ClipBoard :content="encrypted" />
+    </CommonContainerDotted>
 
+    <CommonContainerDotted class="flex max-w-prose flex-col gap-4">
+      <label for="dec-pass" class="block text-lg font-bold text-gray-900 dark:text-white">
+        Decryption
+      </label>
+      <label for="dec-pass" class="block text-sm font-medium text-gray-900 dark:text-white">
+        Decryption Password
+      </label>
+      <CommonInputS id="dec-pass" v-model="decPass" placeholder="1234"
+                    type="text" class="h-9"
+                    :on-clear="() => decPass = ''"
+      />
+      <label for="dec-cipher" class="block text-sm font-medium text-gray-900 dark:text-white">
+        Ciphertext
+      </label>
+      <div class="flex flex-row gap-2">
+        <CommonInputS id="dec-cipher" v-model="decCipher" placeholder="Enter text"
+                      type="text" class="h-9 basis-4/5"
+                      :on-clear="() => decCipher = ''"
+        />
+        <UButton @click="decrypt" class="text-white place-content-center h-9 basis-1/5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          Decrypt
+        </UButton>
+      </div>
+      <label for="decrypted-text" class="block text-sm font-medium text-gray-900 dark:text-white">
+        Decrypted Text
+      </label>
+      <ClipBoard id="decrypted-text" :content="decrypted" />
+    </CommonContainerDotted>
 
-    <div class="flex flex-col mb-6 p-4 gap-4 border-2 border-gray-200 border-dashed rounded-lg
-                dark:border-gray-700">
-      <label class="block text-lg font-bold text-gray-900 dark:text-white"
-      > WASM Runtime Secure Crypto Context </label>
-     <div class="flex flex-row gap-2">
-       <CommonInputS id="context-pass" v-model="contextPass" placeholder="1234"
-                     type="text" class="  h-9 basis-4/5  "
-                     :on-clear="() => contextPass = ''"
-       />
-       <UButton @click="createContext" class="text-white place-content-center h-9 basis-1/5  bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-       >Create</UButton>
-     </div>
+    <CommonContainerDotted class="flex max-w-prose flex-col gap-4">
+      <label class="block text-lg font-bold text-gray-900 dark:text-white">
+        WASM Runtime Secure Crypto Context
+      </label>
+      <div class="flex flex-row gap-2">
+        <CommonInputS id="context-pass" v-model="contextPass" placeholder="1234"
+                      type="text" class="h-9 basis-4/5"
+                      :on-clear="() => contextPass = ''"
+        />
+        <UButton @click="createContext" class="text-white place-content-center h-9 basis-1/5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          Create
+        </UButton>
+      </div>
 
-      <p class=" ">
+      <p>
         Context Handle: {{userStore.contextHandle}}
       </p>
 
-
-      <label for="context-plain" class="block text-sm font-medium text-gray-900 dark:text-white"
-      >Encrypt</label>
+      <label for="context-plain" class="block text-sm font-medium text-gray-900 dark:text-white">
+        Encrypt
+      </label>
 
       <div class="flex flex-row gap-2">
         <CommonInputS id="context-plain" v-model="contextPlain" placeholder="Enter text"
-                      type="text" class=" h-9 basis-4/5  "
+                      type="text" class="h-9 basis-4/5"
                       :on-clear="() => contextPlain = ''"
         />
         <UButton @click="contextEncrypt"
-                class="text-white place-content-center h-9 basis-1/5 bg-blue-700 hover:bg-blue-800 focus:ring-4
-                 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm
-                  w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700
-                  dark:focus:ring-blue-800"
-        >Encrypt</UButton>
+                 class="text-white place-content-center h-9 basis-1/5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          Encrypt
+        </UButton>
       </div>
 
-      <ClipBoard :rows=2 :content="contextEncrypted" class=""/>
+      <ClipBoard :rows="2" :content="contextEncrypted" />
 
-
-      <label for="context-decrypt" class="block mt-5 text-sm font-medium text-gray-900 dark:text-white"
-      >Decrypt</label>
+      <label for="context-decrypt" class="block mt-5 text-sm font-medium text-gray-900 dark:text-white">
+        Decrypt
+      </label>
 
       <div class="flex flex-row gap-2">
         <CommonInputS id="context-decrypt" v-model="contextCipher" placeholder="Enter text"
-                      type="text" class=" h-9 basis-4/5  "
+                      type="text" class="h-9 basis-4/5"
                       :on-clear="() => contextCipher = ''"
         />
         <UButton @click="contextDecrypt"
-                 class="text-white place-content-center h-9 basis-1/5 bg-blue-700 hover:bg-blue-800 focus:ring-4
-                 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm
-                  w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700
-                  dark:focus:ring-blue-800"
-        >Decrypt</UButton>
+                 class="text-white place-content-center h-9 basis-1/5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          Decrypt
+        </UButton>
       </div>
 
-      <ClipBoard :rows=2 :content="contextDecrypted" />
-
-    </div>
-
+      <ClipBoard :rows="2" :content="contextDecrypted" />
+    </CommonContainerDotted>
   </div>
 </template>
 

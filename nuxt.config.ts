@@ -19,7 +19,9 @@ export default defineNuxtConfig({
       enabled: true,
     },
   },
-  plugins: ['~/plugins/wasm'],
+  plugins: [
+    {src:'~/plugins/wasm', mode: 'client'},
+  ],
   postcss: {
     plugins: {
       tailwindcss: {},
