@@ -1,9 +1,9 @@
 <template>
-  <div class="flex flex-row gap-2">
-    <div class="basis-4/5">
+  <div class="grid grid-cols-5 gap-2 w-full items-start">
+    <div class="col-span-4 w-full h-full ">
       <slot name="left"></slot>
     </div>
-    <div class="basis-1/5">
+    <div class="col-span-1 w-full h-full ">
       <slot name="right"></slot>
     </div>
   </div>

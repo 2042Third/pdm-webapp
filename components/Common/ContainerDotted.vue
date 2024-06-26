@@ -1,13 +1,25 @@
 <template>
-  <div class="flex justify-center items-center">
-    <div class="flex flex-col mb-6 p-4 gap-4 border-2
-        border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-      <slot></slot>
+  <div :class="containerClass">
+    <div class="w-full p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+      <div :class="innerClass">
+        <slot></slot>
+      </div>
     </div>
   </div>
 </template>
+
 <script>
 export default {
-  name: 'ContainerDotted'
+  props: {
+    containerClass: {
+      type: String,
+      default: ''
+    },
+    innerClass: {
+      type: String,
+      default: ''
+    },
+  },
+
 }
 </script>
