@@ -18,6 +18,7 @@
             :padded="false"
             @click="onClear"
             class="clear-button"
+            tabindex="-1"
         >
           <IconsClose/>
         </UButton>

@@ -23,6 +23,12 @@
     </CommonContainerDotted>
     <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
       <ClipBoard :content="user.loginPs"/>
+      <text>
+        Login Status: {{user.isLoggedIn}}
+      </text>
+      <text>
+        Session Key: {{user.sessionKey}}
+      </text>
     </CommonContainerDotted>
   </div>
 </template>
