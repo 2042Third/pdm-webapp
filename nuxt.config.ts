@@ -2,7 +2,10 @@
 import {resolve} from "path";
 export default defineNuxtConfig({
   ssr: true,
-
+  devServer: {
+    host: '0.0.0.0',
+    port: 3000
+  },
   router: {
     base: '/webapp/'
   },
