@@ -41,6 +41,7 @@ const input_email = ref("");
 const input_password = ref("");
 const {performLogin} = useLoginAction();
 
+
 function createContext () {
   const ctx = nuxtApp.$wasm.create_context(input_password.value);
   console.log("new = "+ ctx);

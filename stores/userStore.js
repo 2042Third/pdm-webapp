@@ -18,8 +18,9 @@ export const useUserStore =
 
   }
 
-  function setSessionKey(key) {
+  async function setSessionKey(key) {
     sessionKey.value = key;
+    await setIdb("us", key);
   }
 
   function makeLoginPs(value) {
@@ -27,12 +28,15 @@ export const useUserStore =
     loginPs.value = nuxtApp.$wasm.get_hash(value+value);
   }
 
+  async function loadSessionKey() {
+    sessionKey.value = await getIdb("us");
+  }
 
   return {
     email, setEmail,
     contextHandle, setContextHandle,
     loginPs, makeLoginPs,
-    sessionKey, setSessionKey,
+    sessionKey, setSessionKey, loadSessionKey,
     isLoggedIn,
   };
 });

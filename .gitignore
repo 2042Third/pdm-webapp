@@ -22,3 +22,5 @@ logs
 .env
 .env.*
 !.env.example
+
+10.0.0.189
