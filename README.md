@@ -73,3 +73,8 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+
+### Deploy:
+1. Put ".env" file in the root directory
+2. run "pm2" 

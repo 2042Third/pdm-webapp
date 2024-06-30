@@ -9,6 +9,11 @@ export default defineNuxtConfig({
   router: {
     base: '/webapp/'
   },
+  runtimeConfig: {
+    public: {
+      salt: process.env.NUXT_SALT
+    }
+  },
   alias: {
     "@": resolve(__dirname, "/"),
   },

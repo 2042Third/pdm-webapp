@@ -23,7 +23,7 @@ export const useLoginAction = () => {
       console.log('Login response:', response);
 
       if (response && response.sessionKey) {
-        user.setSessionKey(response.sessionKey);
+        await user.setSessionKey(response);
         // router.push('/dashboard')
       } else {
         console.error('Login failed: No session key received');

@@ -41,3 +41,9 @@ export const getIdb = async (key) => {
     return await get(key);
   }
 }
+
+export const deleteIdb = async (key) => {
+  if (import. meta. client) {
+    await del(key);
+  }
+}
