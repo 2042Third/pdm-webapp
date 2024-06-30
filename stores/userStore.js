@@ -5,8 +5,9 @@ export const useUserStore =
   const loginPs = ref("");
   const sessionKey = ref("");
 
+
   const isLoggedIn = computed(()=>{
-    return sessionKey.value !== "";
+    return sessionKey.value && sessionKey.value !== "";
   });
 
   function setEmail(value) {
