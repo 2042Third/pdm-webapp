@@ -35,24 +35,34 @@
           <text>
             Session Key Expiration: {{user.sessionKeyExpiration}}
           </text>
-          <UButton @click="getNotes()"
-                   class="w-full h-full text-white place-content-center
-                        basis-1/5 bg-blue-700 hover:bg-blue-800
-                        focus:ring-4 focus:outline-none focus:ring-blue-300
-                        font-medium rounded-lg text-sm
-                        px-5 py-2.5 text-center dark:bg-blue-600
-                        dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-            Get Notes
-          </UButton>
+
         </client-only>
       </CommonContainerDotted>
 
       <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
         <client-only>
-<!--          A list of notes.-->
-          <text>
-            Notes: {{notes.notesList}}
-          </text>
+          <UButton
+              @click="getNotes()"
+              class="w-full h-full text-white place-content-center
+                 basis-1/5 bg-blue-700 hover:bg-blue-800
+                 focus:ring-4 focus:outline-none focus:ring-blue-300
+                 font-medium rounded-lg text-sm
+                 px-5 py-2.5 text-center dark:bg-blue-600
+                 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >
+            Get Notes
+          </UButton>
+
+          <div v-if="notes.notesList.length" class="space-y-4">
+            <div v-for="note in notes.notesList" :key="note.noteid" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+              <div class="flex justify-between items-center mb-2">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-white">Note ID: {{ note.noteid }}</h2>
+                <span class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(note.time) }}</span>
+              </div>
+              <p class="text-gray-600 dark:text-gray-300">{{ note.heading }}</p>
+            </div>
+          </div>
+          <p v-else class="text-center text-gray-500 dark:text-gray-400">No notes available. Click 'Get Notes' to fetch your notes.</p>
         </client-only>
       </CommonContainerDotted>
     </div>
@@ -67,7 +77,7 @@ const api = useApiStore();
 const notes = useNotesStore();
 const input_email = ref("");
 const input_password = ref("");
-const {performLogin} = useLoginAction();
+const {performLogin} = useAuthAction();
 const {performGetNotes} = useNotesAction();
 
 
@@ -86,6 +96,14 @@ function login() {
 
 function getNotes() {
   performGetNotes(api.get_notes_url);
+}
+
+const formatDate = (timestamp) => {
+  return new Date(timestamp).toLocaleString();
+};
+
+function decrypt (input) {
+  return nuxtApp.$wasm.decrypt(user.contextHandle, input);
 }
 
 </script>

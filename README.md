@@ -78,3 +78,7 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 ### Deploy:
 1. Put ".env" file in the root directory
 2. run "pm2" 
+
+### Debug run
+1. Put ".env" file in the root directory
+2. npx nuxt dev --hostname 10.0.0.189 --port 3000

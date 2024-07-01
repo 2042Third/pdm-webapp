@@ -39,10 +39,7 @@ export default defineNuxtConfig({
   app: {
     pageTransition: { name: 'page', mode: 'out-in' }
   },
-  modules: [
-    '@pinia/nuxt'
-    , "@nuxt/ui"
-  ],
+  modules: ['@pinia/nuxt', "@nuxt/ui", "@nuxt/image"],
 
   hooks: {
     'build:compiled': async (generator) => {

@@ -2,6 +2,7 @@
 export const useNotesAction = () => {
   const notes = useNotesStore();
   const user = useUserStore();
+  const nuxt = useNuxtApp();
 
   const performGetNotes = async (url) => {
     try {
@@ -16,7 +17,12 @@ export const useNotesAction = () => {
 
       if (response ) {
         for (const note of response) {
-          notes.addNoteToList(note);
+          const noteDec = {
+            ...note,
+            heading: note.heading?nuxt.$wasm.decrypt(user.contextHandle, note.heading):"",
+            content: note.content?nuxt.$wasm.decrypt(user.contextHandle, note.content):"",
+          };
+          notes.addNoteToList(noteDec);
         }
         // router.push('/dashboard')
       } else {
