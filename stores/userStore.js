@@ -61,11 +61,13 @@ export const useUserStore =
     const {salt} = useSecurity();
     await setIdb("lp", nuxtApp.$wasm.loader_check(salt(),val));
   }
+
   async function retrieveLocalPassword (val ) {
     const nuxtApp = useNuxtApp();
     const {salt} = useSecurity();
     return await setIdb("lp", nuxtApp.$wasm.loader_out(salt(), val));
   }
+
   async function clearLocalPassword ( ) {
     await deleteIdb("lp");
   }

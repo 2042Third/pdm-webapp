@@ -10,4 +10,14 @@ defineStore('userConfig', () => {
   return {
     storesPasswordLocally, setStoresPasswordLocally
   };
-}, {persist: true});
+}, {
+  persist: true
+    // [
+    // {
+    //   storage: localStorage,
+    // },
+    // {
+    //   storage: sessionStorage,
+    // },
+  // ],
+});
