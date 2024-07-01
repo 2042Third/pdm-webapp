@@ -39,8 +39,18 @@ export default defineNuxtConfig({
   app: {
     pageTransition: { name: 'page', mode: 'out-in' }
   },
-  modules: ['@pinia/nuxt', "@nuxt/ui", "@nuxt/image"],
-
+  modules: [
+    '@pinia/nuxt',
+    "@nuxt/ui",
+    "@nuxt/image",
+    '@pinia-plugin-persistedstate/nuxt',
+  ],
+  piniaPersistedstate: {
+    cookieOptions: {
+      sameSite: 'strict',
+    },
+    storage: 'localStorage'
+  },
   hooks: {
     'build:compiled': async (generator) => {
       const fs = require('fs').promises;

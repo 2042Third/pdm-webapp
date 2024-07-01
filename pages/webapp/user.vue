@@ -22,6 +22,15 @@
                         dark:hover:bg-blue-700 dark:focus:ring-blue-800">
           Login
         </UButton>
+        <UButton v-if="user.isLoggedIn" @click="logout()"
+                 class="w-full h-full text-white place-content-center
+                        basis-1/5 bg-blue-700 hover:bg-blue-800
+                        focus:ring-4 focus:outline-none focus:ring-blue-300
+                        font-medium rounded-lg text-sm
+                        px-5 py-2.5 text-center dark:bg-blue-600
+                        dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          Logout
+        </UButton>
       </CommonContainerDotted>
       <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
         <ClipBoard :content="user.loginPs"/>
@@ -38,7 +47,21 @@
 
         </client-only>
       </CommonContainerDotted>
-
+      <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
+        <client-only>
+          <UButton
+              @click="getUserData()"
+              class="w-full h-full text-white place-content-center
+                 basis-1/5 bg-blue-700 hover:bg-blue-800
+                 focus:ring-4 focus:outline-none focus:ring-blue-300
+                 font-medium rounded-lg text-sm
+                 px-5 py-2.5 text-center dark:bg-blue-600
+                 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >
+            Get User Data
+          </UButton>
+        </client-only>
+      </CommonContainerDotted>
       <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
         <client-only>
           <UButton
@@ -75,10 +98,10 @@ const nuxtApp = useNuxtApp();
 const user = useUserStore();
 const api = useApiStore();
 const notes = useNotesStore();
-const input_email = ref("");
-const input_password = ref("");
-const {performLogin} = useAuthAction();
+const userConfig = useUserConfigStore();
+const {performLogin, performLogout} = useAuthAction();
 const {performGetNotes} = useNotesAction();
+
 
 
 function createContext () {
@@ -87,11 +110,22 @@ function createContext () {
   user.setContextHandle(ctx);
 }
 
-function login() {
+const input_email = ref("");
+const input_password = ref("");
+async function login() {
   user.setEmail(input_email.value);
   createContext();
   user.makeLoginPs(input_password.value);
-  performLogin(api.signin_url);
+  if (await performLogin(api.signin_url)) {
+    if (userConfig.storesPasswordLocally) {
+      await user.storeLocalPassword(input_password.value);
+    }
+  }
+}
+
+async function logout() {
+  await user.clearAll();
+  await performLogout(api.signout_url);
 }
 
 function getNotes() {
@@ -101,6 +135,13 @@ function getNotes() {
 const formatDate = (timestamp) => {
   return new Date(timestamp).toLocaleString();
 };
+
+const userDataStatus = ref(false);
+const {performGetUserData} = useAuthAction();
+async function getUserData(){
+  userDataStatus.value = await performGetUserData(api.get_user_url);
+  console.log("[User page] UserData" + user.userData);
+}
 
 function decrypt (input) {
   return nuxtApp.$wasm.decrypt(user.contextHandle, input);

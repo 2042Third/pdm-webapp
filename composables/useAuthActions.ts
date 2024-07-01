@@ -25,16 +25,40 @@ export const useAuthAction = () => {
 
       if (response && response.sessionKey) {
         await user.setSessionKey(response);
-        if (userConfig.storesPasswordLocally){
-          await user.storeLocalPassword(loginPs.value);
-        }
-        // router.push('/dashboard')
+        return true;
       } else {
         console.error('Login failed: No session key received');
+        return false;
       }
     } catch (error) {
       console.error('Login error:', error.response ? error.response._data : error.message);
       // Handle error (e.g., show error message to user)
+      return false;
+    }
+  }
+
+  const performLogout = async (url) => {
+    try {
+      const response = await $fetch(url, {
+        method: 'POST',
+        headers: {
+          "Session-Key": user.sessionKey,
+        }
+      });
+
+      console.log('Logout response:', response);
+
+      if (response) {
+
+        return true;
+      } else {
+        console.error('Logout error.');
+        return false;
+      }
+    } catch (error) {
+      console.error('Logout returned error: ', error.response ? error.response._data : error.message);
+      // Handle error (e.g., show error message
+      return false;
     }
   }
 
@@ -49,8 +73,8 @@ export const useAuthAction = () => {
 
       console.log('Load User Data response:', response);
 
-      if (response && response.user) {
-        await user.setUserData(response.user);
+      if (response) {
+        await user.setUserData(response);
         // router.push('/dashboard')
         return true;
       } else {
@@ -66,6 +90,7 @@ export const useAuthAction = () => {
 
   return {
     performLogin,
+    performLogout,
     performGetUserData,
   }
 
