@@ -78,8 +78,12 @@ const connect = () => {
 
   websocket.onmessage = (event) => {
     const receivedMessage = event.data
-    console.log('Received message:', receivedMessage)
-    receivedMessages.value.push(receivedMessage)
+    if (receivedMessage !== "Heartbeat") {
+      console.log('Received message:', receivedMessage)
+      receivedMessages.value.push(receivedMessage)
+    } else {
+      console.log('Heartbeat received')
+    }
   }
 
   websocket.onclose = () => {
