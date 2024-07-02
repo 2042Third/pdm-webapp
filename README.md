@@ -77,7 +77,8 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 
 ### Deploy:
 1. Put ".env" file in the root directory
-2. run "pm2" 
+2. run "pm2 stop all" to stop previous all running process 
+3. run "pm2 start ecosystem.config.js "
 
 ### Debug run
 1. Put ".env" file in the root directory

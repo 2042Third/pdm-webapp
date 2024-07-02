@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onUnmounted } from 'vue'
+import { ref, computed, onUnmounted, onMounted } from 'vue'
 
 const notifications = ref([])
 const isConnected = ref(false)
@@ -53,111 +53,120 @@ const connectionButtonText = computed(() => {
   return isConnected.value ? 'Disconnect' : 'Connect'
 })
 
-const toggleConnection = () => {
+const toggleConnection = async () => {
   if (isConnected.value) {
     console.log("Sending disconnect.");
-    disconnect()
+    await disconnect()
   } else {
     console.log("Sending connect.");
-    connect()
+    await connect()
   }
 }
 
-const connect = () => {
+const connect = async () => {
+  // Ensure any existing connection is closed before starting a new one
+  await disconnect()
+
   isConnecting.value = true
   error.value = null
   connectionStatus.value = 'Initiating connection...'
   console.log('Attempting to connect to SSE...')
 
-  eventSource = new EventSource('http://10.0.0.189/sse-stream/notification', { withCredentials: true })
+  try {
+    eventSource = new EventSource('http://10.0.0.189/sse-stream/notification', { withCredentials: true })
 
-  eventSource.addEventListener('connected', (e) => {
-    console.log('Received connected event', e);
-    isConnecting.value = false;
-    isConnected.value = true;
-    connectionStatus.value = 'Connected';
-    startHeartbeatCheck();
-  });
+    eventSource.addEventListener('connected', (e) => {
+      console.log('Received connected event', e);
+      isConnecting.value = false;
+      isConnected.value = true;
+      connectionStatus.value = 'Connected';
+      startHeartbeatCheck();
+    });
 
-  eventSource.onopen = (e) => {
-    console.log('SSE connection opened', e);
-    retryCount = 0;
-  };
+    eventSource.onopen = (e) => {
+      console.log('SSE connection opened', e);
+      retryCount = 0;
+    };
 
-  eventSource.addEventListener('notification', (e) => {
-    console.log('Received notification event', e)
-    try {
-      const notification = JSON.parse(e.data)
-      notifications.value.push(notification)
-    } catch (err) {
-      console.error('Error parsing notification:', err, 'Raw data:', e.data)
+    eventSource.addEventListener('notification', (e) => {
+      console.log('Received notification event', e)
+      try {
+        const notification = JSON.parse(e.data)
+        notifications.value.push(notification)
+      } catch (err) {
+        console.error('Error parsing notification:', err, 'Raw data:', e.data)
+      }
+    })
+
+    eventSource.addEventListener('heartbeat', (e) => {
+      console.log('Received heartbeat', e)
+      resetHeartbeatCheck()
+    })
+
+    eventSource.onmessage = (e) => {
+      console.log('SSE message received', e)
+      try {
+        const notification = JSON.parse(e.data)
+        notifications.value.push(notification)
+      } catch (err) {
+        console.error('Error parsing SSE message:', err, 'Raw data:', e.data)
+        error.value = `Error parsing message: ${err.message}`
+      }
     }
-  })
 
-  eventSource.addEventListener('heartbeat', (e) => {
-    console.log('Received heartbeat', e)
-    resetHeartbeatCheck()
-  })
+    eventSource.onerror = async (e) => {
+      console.error('SSE connection error:', e)
+      error.value = `SSE connection failed: ${e.type}`
+      await handleDisconnection()
 
-  eventSource.onmessage = (e) => {
-    console.log('SSE message received', e)
-    try {
-      const notification = JSON.parse(e.data)
-      notifications.value.push(notification)
-    } catch (err) {
-      console.error('Error parsing SSE message:', err, 'Raw data:', e.data)
-      error.value = `Error parsing message: ${err.message}`
+      if (retryCount < MAX_RETRIES) {
+        retryCount++
+        const delay = Math.min(1000 * 2 ** retryCount, 30000)
+        console.log(`Retrying connection in ${delay}ms...`)
+        retryTimeout = setTimeout(connect, delay)
+      } else {
+        console.error('Max retries reached. Please try reconnecting manually.')
+      }
     }
-  }
-
-  eventSource.onerror = (e) => {
-    console.error('SSE connection error:', e)
-    error.value = `SSE connection failed: ${e.type}`
-    isConnected.value = false
-    isConnecting.value = false
-    connectionStatus.value = 'Connection failed'
-    closeEventSource()
-    clearTimeout(heartbeatTimeout)
-
-    if (retryCount < MAX_RETRIES) {
-      retryCount++
-      const delay = Math.min(1000 * 2 ** retryCount, 30000)
-      console.log(`Retrying connection in ${delay}ms...`)
-      retryTimeout = setTimeout(connect, delay)
-    } else {
-      console.error('Max retries reached. Please try reconnecting manually.')
-    }
-  }
-}
-
-const disconnect = () => {
-  if (eventSource) {
-    console.log("Disconnecting from SSE...");
-    closeEventSource()
-    isConnected.value = false
-    connectionStatus.value = 'Disconnected'
-    clearTimeout(retryTimeout)
-    clearTimeout(heartbeatTimeout)
-    retryCount = 0
-  } else {
-    console.log("No connection to disconnect from SSE...");
+  } catch (err) {
+    console.error('Error setting up SSE connection:', err)
+    await handleDisconnection()
   }
 }
 
-const closeEventSource = () => {
+const disconnect = async () => {
+  console.log("Disconnecting from SSE...");
+  await handleDisconnection()
+}
+
+const handleDisconnection = async () => {
+  isConnected.value = false
+  isConnecting.value = false
+  connectionStatus.value = 'Disconnected'
+
   if (eventSource) {
     eventSource.close()
     eventSource = null
     console.log("EventSource closed and nullified")
   }
+
+  clearTimeout(retryTimeout)
+  clearTimeout(heartbeatTimeout)
+  retryCount = 0
+
+  // Optionally, you might want to clear notifications here
+  // notifications.value = []
+
+  // Wait a moment to ensure the connection is fully closed
+  await new Promise(resolve => setTimeout(resolve, 1000))
 }
 
 const startHeartbeatCheck = () => {
-  heartbeatTimeout = setTimeout(() => {
+  heartbeatTimeout = setTimeout(async () => {
     console.error('Heartbeat not received within expected time')
-    closeEventSource()
+    await handleDisconnection()
     // Optionally, you can attempt to reconnect here
-    // connect()
+    // await connect()
   }, 62000) // Expect heartbeat every 30 seconds, wait 62 to account for what time you join.
 }
 
@@ -186,7 +195,12 @@ const sendTestNotification = async () => {
   }
 }
 
-onUnmounted(() => {
-  disconnect()
+onMounted(() => {
+  // Optionally, you can auto-connect here
+  // connect()
+})
+
+onUnmounted(async () => {
+  await disconnect()
 })
 </script>
