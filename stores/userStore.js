@@ -24,6 +24,7 @@ export const useUserStore =
 
   function setUserData(data) {
     userData.value = data;
+    email.value = data.email;
   }
 
   async function setSessionKey(key) {
@@ -62,10 +63,11 @@ export const useUserStore =
     await setIdb("lp", nuxtApp.$wasm.loader_check(salt(),val));
   }
 
-  async function retrieveLocalPassword (val ) {
+  async function retrieveLocalPassword ( ) {
     const nuxtApp = useNuxtApp();
     const {salt} = useSecurity();
-    return await setIdb("lp", nuxtApp.$wasm.loader_out(salt(), val));
+    const val = await getIdb("lp");
+    return  nuxtApp.$wasm.loader_out(salt(), val);
   }
 
   async function clearLocalPassword ( ) {

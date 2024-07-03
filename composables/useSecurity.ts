@@ -28,5 +28,14 @@ export const useSecurity = () => {
     return nuxtApp.$wasm.get_hash(rawFingerprint + salt);
 
   }
-  return {salt};
+
+  const createSecureContext = (a) => {
+    const nuxtApp = useNuxtApp();
+    const user = useUserStore();
+    const ctx = nuxtApp.$wasm.create_context(a);
+    console.log("createSecureContext = "+ ctx);
+    user.setContextHandle(ctx);
+  }
+
+  return {salt, createSecureContext};
 }

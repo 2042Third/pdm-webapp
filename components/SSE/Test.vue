@@ -47,6 +47,7 @@ const MAX_RETRIES = 5
 let retryCount = 0
 let retryTimeout = null
 let heartbeatTimeout = null
+const apiStore = useApiStore();
 
 const connectionButtonText = computed(() => {
   if (isConnecting.value) return 'Connecting...'
@@ -73,7 +74,7 @@ const connect = async () => {
   console.log('Attempting to connect to SSE...')
 
   try {
-    eventSource = new EventSource('http://10.0.0.189/sse-stream/notification', { withCredentials: true })
+    eventSource = new EventSource(apiStore.get_sse_notifications_url, { withCredentials: true })
 
     eventSource.addEventListener('connected', (e) => {
       console.log('Received connected event', e);
@@ -178,7 +179,7 @@ const resetHeartbeatCheck = () => {
 const sendTestNotification = async () => {
   try {
     connectionStatus.value = 'Sending test notification...'
-    const response = await fetch('http://10.0.0.189/sse-stream/send-notification', {
+    const response = await fetch(apiStore.get_sse_send_notification_url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
