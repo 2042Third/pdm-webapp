@@ -30,15 +30,17 @@ export const useUserStore =
   async function setSessionKey(key) {
     const nuxtApp = useNuxtApp();
     const {salt} = useSecurity();
+    const {setStorage } = useLocalStorage();
     sessionKey.value = key.sessionKey;
     sessionKeyExpiration.value = key.expirationTime;
-    await setIdb("us", nuxtApp.$wasm.loader_check(salt(),JSON.stringify(key)));
+    await setStorage("us", nuxtApp.$wasm.loader_check(salt(),JSON.stringify(key)));
   }
 
   async function loadSessionKey() {
     const nuxtApp = useNuxtApp();
     const {salt} = useSecurity();
-    const val = await getIdb("us");
+    const {getStorage } = useLocalStorage();
+    const val = await getStorage("us");
     if (!val || val === "" || val === "null" || val === "undefined") {
       return;
     }
@@ -48,8 +50,9 @@ export const useUserStore =
   }
 
   async function clearSessionKey() {
+    const {removeStorage} = useLocalStorage();
     sessionKey.value = "";
-    await deleteIdb("us");
+    await removeStorage("us");
   }
 
   function makeLoginPs(value) {
@@ -60,18 +63,21 @@ export const useUserStore =
   async function storeLocalPassword (val ) {
     const nuxtApp = useNuxtApp();
     const {salt} = useSecurity();
-    await setIdb("lp", nuxtApp.$wasm.loader_check(salt(),val));
+    const {setStorage } = useLocalStorage();
+    await setStorage("lp", nuxtApp.$wasm.loader_check(salt(),val));
   }
 
   async function retrieveLocalPassword ( ) {
     const nuxtApp = useNuxtApp();
     const {salt} = useSecurity();
-    const val = await getIdb("lp");
+    const {getStorage} = useLocalStorage();
+    const val = await getStorage("lp");
     return  nuxtApp.$wasm.loader_out(salt(), val);
   }
 
   async function clearLocalPassword ( ) {
-    await deleteIdb("lp");
+    const {removeStorage} = useLocalStorage();
+    await removeStorage("lp");
   }
 
   function setValidationStatus(status) {
