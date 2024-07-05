@@ -176,7 +176,7 @@ const startHeartbeatCheck = () => {
     await handleDisconnection()
     // Optionally, you can attempt to reconnect here
     // await connect()
-  }, 62000) // Expect heartbeat every 30 seconds, wait 62 to account for what time you join.
+  }, 620000) // Expect heartbeat every 300 seconds, wait 620 to account for what time you join.
 }
 
 const resetHeartbeatCheck = () => {
