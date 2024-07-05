@@ -4,28 +4,28 @@
     <div class="flex items-center space-x-4 mb-4">
       <button
           @click="toggleConnection"
-          :disabled="isConnecting"
+          :disabled="sseStore.isConnecting"
           :class="{
-          'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded': !isConnected,
-          'bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded': isConnected,
-          'opacity-50 cursor-not-allowed': isConnecting
+          'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded': !sseStore.isConnected,
+          'bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded': sseStore.isConnected,
+          'opacity-50 cursor-not-allowed': sseStore.isConnecting
         }"
       >
         {{ connectionButtonText }}
       </button>
       <button
           @click="sendTestNotification"
-          :disabled="!isConnected"
+          :disabled="!sseStore.isConnected"
           class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Send Test Notification
       </button>
     </div>
-    <div v-if="connectionStatus" class="text-yellow-500">Connection Status: {{ connectionStatus }}</div>
-    <div v-if="error" class="text-red-500">{{ error }}</div>
+    <div v-if="sseStore.connectionStatus" class="text-yellow-500">Connection Status: {{ sseStore.connectionStatus }}</div>
+    <div v-if="sseStore.error" class="text-red-500">{{ sseStore.error }}</div>
     <ul class="list-disc pl-5">
       <li
-          v-for="notification in notifications" :key="notification.id"
+          v-for="notification in sseStore.notifications" :key="notification.id"
           class="mb-2 p-2 border-b border-gray-200"
       >
         {{ notification.message }}
@@ -35,72 +35,73 @@
 </template>
 
 <script setup>
-import { ref, computed, onUnmounted, onMounted } from 'vue'
-import {CustomEventSource} from "~/CustomEventSource.cjs";
+import {computed, onUnmounted, onMounted} from 'vue'
+import {CustomEventSource} from "~/CustomEventSource.cjs"
+import {useSseStore} from '~/stores/sseStore'
+import {useApiStore} from '~/stores/apiStore'
+import {useUserStore} from '~/stores/userStore'
+import {useSSEActions} from '~/composables/useSSEActions'
 
-const notifications = ref([])
-const isConnected = ref(false)
-const isConnecting = ref(false)
-const error = ref(null)
-const connectionStatus = ref('')
-let eventSource = null
 const MAX_RETRIES = 5
 let retryCount = 0
 let retryTimeout = null
 let heartbeatTimeout = null
-const apiStore = useApiStore();
-const userStore = useUserStore();
+let eventSource = null
+
+const apiStore = useApiStore()
+const userStore = useUserStore()
+const sseStore = useSseStore()
+const {performTestNotification} = useSSEActions()
 
 const connectionButtonText = computed(() => {
-  if (isConnecting.value) return 'Connecting...'
-  return isConnected.value ? 'Disconnect' : 'Connect'
+  if (sseStore.isConnecting) return 'Connecting...'
+  return sseStore.isConnected ? 'Disconnect' : 'Connect'
 })
 
 const toggleConnection = async () => {
-  if (isConnected.value) {
-    console.log("Sending disconnect.");
+  if (sseStore.isConnected) {
+    console.log("Sending disconnect.")
     await disconnect()
   } else {
-    console.log("Sending connect.");
+    console.log("Sending connect.")
     await connect()
   }
 }
 
 const connect = async () => {
-  // Ensure any existing connection is closed before starting a new one
   await disconnect()
 
-  isConnecting.value = true
-  error.value = null
-  connectionStatus.value = 'Initiating connection...'
+  sseStore.setIsConnecting(true)
+  sseStore.setError(null)
+  sseStore.setConnectionStatus('Initiating connection...')
   console.log('Attempting to connect to SSE...')
 
   try {
     eventSource = new CustomEventSource(apiStore.get_sse_notifications_url, {
-      withCredentials: true ,
+      withCredentials: true,
       headers: {
         'Session-Key': userStore.sessionKey
       }
     })
 
     eventSource.addEventListener('connected', (e) => {
-      console.log('Received connected event', e);
-      isConnecting.value = false;
-      isConnected.value = true;
-      connectionStatus.value = 'Connected';
-      startHeartbeatCheck();
-    });
+      console.log('Received connected event', e)
+      sseStore.setIsConnecting(false)
+      sseStore.setIsConnected(true)
+      sseStore.setConnectionStatus('Connected')
+      startHeartbeatCheck()
+    })
 
     eventSource.onopen = (e) => {
-      console.log('SSE connection opened', e);
-      retryCount = 0;
-    };
+      console.log('SSE connection opened', e)
+      retryCount = 0
+    }
 
     eventSource.addEventListener('notification', (e) => {
       console.log('Received notification event', e)
       try {
         const notification = JSON.parse(e.data)
-        notifications.value.push(notification)
+        sseStore.addNotification(notification)
       } catch (err) {
         console.error('Error parsing notification:', err, 'Raw data:', e.data)
       }
@@ -115,16 +116,16 @@ const connect = async () => {
       console.log('SSE message received', e)
       try {
         const notification = JSON.parse(e.data)
-        notifications.value.push(notification)
+        sseStore.addNotification(notification)
       } catch (err) {
         console.error('Error parsing SSE message:', err, 'Raw data:', e.data)
-        error.value = `Error parsing message: ${err.message}`
+        sseStore.setError(`Error parsing message: ${err.message}`)
       }
     }
 
     eventSource.onerror = async (e) => {
       console.error('SSE connection error:', e)
-      error.value = `SSE connection failed: ${e.type}`
+      sseStore.setError(`SSE connection failed: ${e.type}`)
       await handleDisconnection()
 
       if (retryCount < MAX_RETRIES) {
@@ -143,14 +144,14 @@ const connect = async () => {
 }
 
 const disconnect = async () => {
-  console.log("Disconnecting from SSE...");
+  console.log("Disconnecting from SSE...")
   await handleDisconnection()
 }
 
 const handleDisconnection = async () => {
-  isConnected.value = false
-  isConnecting.value = false
-  connectionStatus.value = 'Disconnected'
+  sseStore.setIsConnected(false)
+  sseStore.setIsConnecting(false)
+  sseStore.setConnectionStatus('Disconnected')
 
   if (eventSource) {
     eventSource.close()
@@ -163,7 +164,7 @@ const handleDisconnection = async () => {
   retryCount = 0
 
   // Optionally, you might want to clear notifications here
-  // notifications.value = []
+  // sseStore.clearNotifications()
 
   // Wait a moment to ensure the connection is fully closed
   await new Promise(resolve => setTimeout(resolve, 1000))
@@ -184,23 +185,7 @@ const resetHeartbeatCheck = () => {
 }
 
 const sendTestNotification = async () => {
-  try {
-    connectionStatus.value = 'Sending test notification...'
-    const response = await fetch(apiStore.get_sse_send_notification_url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ message: 'Test notification' }),
-    })
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
-    const responseText = await response.text()
-    console.log('Test notification sent, response:', responseText)
-    connectionStatus.value = 'Test notification sent'
-  } catch (e) {
-    console.error('Error sending test notification:', e)
-    error.value = `Failed to send notification: ${e.message}`
-  }
+  await performTestNotification(userStore.sessionKey)
 }
 
 onMounted(() => {
