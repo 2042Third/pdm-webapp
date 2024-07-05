@@ -17,6 +17,7 @@ export const useApiStore =
     const sse_send_notification = "/sse-stream/send-notification";
     const sse_notifications = "/sse-stream/notification";
     const csrf_ = "/api/csrf-token";
+    const validation = "/validate";
 
     const signin_url = computed(() => (config.public.isProd ? api_production : api_base) + api_signin)
     const signout_url = computed(() => (config.public.isProd ? api_production : api_base) + api_signout)
@@ -26,6 +27,7 @@ export const useApiStore =
     const get_sse_send_notification_url = computed(() => (config.public.isProd ? api_production : api_base) + sse_send_notification)
     const get_sse_notifications_url = computed(() => (config.public.isProd ? api_production : api_base) + sse_notifications)
     const get_csrf_url = computed(() => (config.public.isProd ? api_production : api_base) + csrf_)
+    const get_validation_url = computed(() => (config.public.isProd ? api_production : api_base) + api_get_user+validation)
 
     return {
       signin_url,
@@ -36,5 +38,6 @@ export const useApiStore =
       get_sse_send_notification_url,
       get_sse_notifications_url,
       get_csrf_url,
+      get_validation_url,
     };
   });

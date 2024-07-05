@@ -39,7 +39,7 @@ export const useAuthAction = () => {
 
   const performLogout = async (url) => {
     try {
-      const response = await useFetch(url, {
+      const response = await $fetch(url, {
         method: 'GET',
         headers: {
           "Session-Key": user.sessionKey,
@@ -64,7 +64,7 @@ export const useAuthAction = () => {
 
   const performGetUserData = async (url) => {
     try {
-      const response = await useFetch(url, {
+      const response = await $fetch(url, {
         method: 'GET',
         headers: {
           "Session-Key": user.sessionKey,
@@ -73,8 +73,8 @@ export const useAuthAction = () => {
 
       console.log('Load User Data response:', response);
 
-      if (response.data) {
-        await user.setUserData(response.data);
+      if (response) {
+        await user.setUserData(response);
         // router.push('/dashboard')
         return true;
       } else {
@@ -86,11 +86,11 @@ export const useAuthAction = () => {
       // Handle error (e.g., show error message
       return false;
     }
-  }
+  };
 
   const performGetUserDataPOST = async (url) => {
     try {
-      const response = await useFetch(url, {
+      const response = await $fetch(url, {
         method: 'POST',
         headers: {
           "Session-Key": user.sessionKey,
@@ -117,7 +117,7 @@ export const useAuthAction = () => {
 
   const performCSRFGet = async (url) => {
     try {
-      const response = await useFetch(url, {
+      const response = await $fetch(url, {
         method: 'GET',
         headers: {
           "Session-Key": user.sessionKey,
@@ -150,12 +150,41 @@ export const useAuthAction = () => {
     }
   }
 
+  const performValidation = async (url) => {
+    try {
+      const response = await $fetch(url, {
+        method: 'GET',
+        headers: {
+          "Session-Key": user.sessionKey,
+        }
+      });
+
+      console.log('Validation:', response);
+
+      if (response) {
+        user.setValidationStatus(true);
+
+        return true;
+      } else {
+        console.error('Validation call failed');
+        user.setValidationStatus(false);
+        return false;
+      }
+    } catch (error) {
+      console.error('Validation call returned error: ', error.response ? error.response._data : error.message);
+      // Handle error (e.g., show error message
+      user.setValidationStatus(false);
+      return false;
+    }
+  }
+
   return {
     performLogin,
     performLogout,
     performGetUserData,
     performGetUserDataPOST,
     performCSRFGet,
+    performValidation
   }
 
 }

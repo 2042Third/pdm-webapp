@@ -7,7 +7,7 @@ export const useNotesAction = () => {
   const performGetNotes = async (url) => {
     try {
 
-      const response = await useFetch(url, {
+      const response = await $fetch(url, {
         method: 'GET',
         headers: {
           "Session-Key": user.sessionKey,
@@ -38,7 +38,7 @@ export const useNotesAction = () => {
   const performGetNotesPOST = async (url) => {
     try {
 
-      const response = await useFetch(url, {
+      const response = await $fetch(url, {
         method: 'GET',
         headers: {
           "Session-Key": user.sessionKey,

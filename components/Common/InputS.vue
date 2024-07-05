@@ -4,6 +4,7 @@
         :id="id"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
+        @keydown="handleKeyDown"
         :placeholder="placeholder"
         :type="type"
         :autocomplete="autocomplete"
@@ -52,10 +53,30 @@ export default {
     },
     onClear: {
       type: Function,
-      default: () => console.log("onClear not defined."),
+      default: () => {},
+    },
+    onEnter: {
+      type: Function,
+      default: () => {},
     },
   },
   emits: ['update:modelValue'],
+  data() {
+    return {
+      lastEnterPress: 0,
+    };
+  },
+  methods: {
+    handleKeyDown(event) {
+      if (event.key === 'Enter') {
+        const now = Date.now();
+        if (now - this.lastEnterPress > 300) { // Debounce for 300ms
+          this.onEnter();
+          this.lastEnterPress = now;
+        }
+      }
+    },
+  },
 };
 </script>
 

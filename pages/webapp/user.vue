@@ -8,6 +8,7 @@
             class="w-full h-full"
             :class="{ 'border-red-500': showError }"
             :on-clear="() => input_email = ''"
+            :on-enter="login"
             placeholder="Email"
         />
 
@@ -18,6 +19,7 @@
             class="w-full h-full"
             :class="{ 'border-red-500': showError }"
             :on-clear="() => input_password = ''"
+            :on-enter="login"
             placeholder="Password"
         />
 
@@ -65,7 +67,10 @@
             Session Key: {{user.sessionKey}}
           </text>
           <text>
-            Session Key Expiration: {{user.sessionKeyExpiration}}
+            Session Key Expiration: {{unixToHumanReadableTime(user.sessionKeyExpiration)}}
+          </text>
+          <text>
+            Session Key Validation Status: {{user.validationStatus}}
           </text>
 
         </client-only>
@@ -95,7 +100,7 @@
           Get User Data POST
         </UButton>
         <UButton
-            @click="getCSRFKey()"
+            @click="getValidation()"
             class="w-full h-full text-white place-content-center
                  basis-1/5 bg-blue-700 hover:bg-blue-800
                  focus:ring-4 focus:outline-none focus:ring-blue-300
@@ -103,7 +108,7 @@
                  px-5 py-2.5 text-center dark:bg-blue-600
                  dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
-          Get CSRF Key
+          Validate Session Key
         </UButton>
       </CommonContainerDotted>
       <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
@@ -144,8 +149,9 @@ const user = useUserStore();
 const api = useApiStore();
 const notes = useNotesStore();
 const userConfig = useUserConfigStore();
-const { performLogin, performLogout,performCSRFGet } = useAuthAction();
+const { performLogin, performLogout, performValidation } = useAuthAction();
 const { performGetNotes } = useNotesAction();
+const { unixToHumanReadableTime } = useUtil();
 
 const input_email = ref("");
 const input_password = ref("");
@@ -216,8 +222,8 @@ async function getUserDataPOST(){
   console.log("[User page] UserDataPOST" + user.userData);
 }
 
-async function getCSRFKey () {
-  await performCSRFGet(api.get_csrf_url);
+async function getValidation () {
+  await performValidation(api.get_validation_url);
 }
 
 function decrypt (input) {
@@ -225,6 +231,7 @@ function decrypt (input) {
 }
 
 </script>
+
 <style scoped>
 @keyframes shake {
   0%, 100% { transform: translateX(0); }

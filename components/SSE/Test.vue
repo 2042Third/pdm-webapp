@@ -36,6 +36,7 @@
 
 <script setup>
 import { ref, computed, onUnmounted, onMounted } from 'vue'
+import {CustomEventSource} from "~/CustomEventSource.cjs";
 
 const notifications = ref([])
 const isConnected = ref(false)
@@ -48,6 +49,7 @@ let retryCount = 0
 let retryTimeout = null
 let heartbeatTimeout = null
 const apiStore = useApiStore();
+const userStore = useUserStore();
 
 const connectionButtonText = computed(() => {
   if (isConnecting.value) return 'Connecting...'
@@ -74,7 +76,12 @@ const connect = async () => {
   console.log('Attempting to connect to SSE...')
 
   try {
-    eventSource = new EventSource(apiStore.get_sse_notifications_url, { withCredentials: true })
+    eventSource = new CustomEventSource(apiStore.get_sse_notifications_url, {
+      withCredentials: true ,
+      headers: {
+        'Session-Key': userStore.sessionKey
+      }
+    })
 
     eventSource.addEventListener('connected', (e) => {
       console.log('Received connected event', e);

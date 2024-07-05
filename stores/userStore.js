@@ -7,7 +7,7 @@ export const useUserStore =
   const sessionKey = ref("");
   const sessionKeyExpiration = ref(0);
   const userData = ref(null);
-
+  const validationStatus = ref(false);
 
   const isLoggedIn = computed(()=>{
     return sessionKey.value && sessionKey.value !== "";
@@ -74,6 +74,10 @@ export const useUserStore =
     await deleteIdb("lp");
   }
 
+  function setValidationStatus(status) {
+    validationStatus.value = status;
+  }
+
 
   async function clearAll() {
     email.value = "";
@@ -95,5 +99,6 @@ export const useUserStore =
     storeLocalPassword, retrieveLocalPassword, clearLocalPassword,
     userData, setUserData,
     clearAll,
+    validationStatus, setValidationStatus
   };
 });
