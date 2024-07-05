@@ -8,10 +8,19 @@ export const useUserStore =
   const sessionKeyExpiration = ref(0);
   const userData = ref(null);
   const validationStatus = ref(false);
+  const authAttempt = ref(0);
 
   const isLoggedIn = computed(()=>{
     return sessionKey.value && sessionKey.value !== "";
   });
+
+  function addAuthAttempt() {
+    authAttempt.value++;
+  }
+
+  function resetAuthAttempt() {
+    authAttempt.value = 0;
+  }
 
   function setEmail(value) {
     email.value = value;
@@ -30,29 +39,42 @@ export const useUserStore =
   async function setSessionKey(key) {
     const nuxtApp = useNuxtApp();
     const {salt} = useSecurity();
-    const {setStorage } = useLocalStorage();
+
+    const storage = useLocalStorage();
+    await storage.init();
     sessionKey.value = key.sessionKey;
     sessionKeyExpiration.value = key.expirationTime;
-    await setStorage("us", nuxtApp.$wasm.loader_check(salt(),JSON.stringify(key)));
+    await storage.setStorage("us", nuxtApp.$wasm.loader_check(salt(),JSON.stringify(key)));
   }
 
   async function loadSessionKey() {
-    const nuxtApp = useNuxtApp();
-    const {salt} = useSecurity();
-    const {getStorage } = useLocalStorage();
-    const val = await getStorage("us");
-    if (!val || val === "" || val === "null" || val === "undefined") {
+    try {
+
+      const nuxtApp = useNuxtApp();
+      const {salt} = useSecurity();
+      const storage = useLocalStorage();
+      await storage.init();
+      const val = await storage.getStorage("us");
+      if (!val || val === "" || val === "null" || val === "undefined") {
+        return;
+      }
+      const parsedVal = JSON.parse(nuxtApp.$wasm.loader_out(salt(),val));
+      sessionKey.value = parsedVal.sessionKey;
+      sessionKeyExpiration.value = parsedVal.expirationTime;
+    }
+    catch (e) {
+      console.error("Error loading session key: ", e);
+
       return;
     }
-    const parsedVal = JSON.parse(nuxtApp.$wasm.loader_out(salt(),val));
-    sessionKey.value = parsedVal.sessionKey;
-    sessionKeyExpiration.value = parsedVal.expirationTime;
+
   }
 
   async function clearSessionKey() {
-    const {removeStorage} = useLocalStorage();
+    const storage = useLocalStorage();
+    await storage.init();
     sessionKey.value = "";
-    await removeStorage("us");
+    await storage.removeStorage("us");
   }
 
   function makeLoginPs(value) {
@@ -63,21 +85,24 @@ export const useUserStore =
   async function storeLocalPassword (val ) {
     const nuxtApp = useNuxtApp();
     const {salt} = useSecurity();
-    const {setStorage } = useLocalStorage();
-    await setStorage("lp", nuxtApp.$wasm.loader_check(salt(),val));
+    const storage = useLocalStorage();
+    await storage.init();
+    await storage.setStorage("lp", nuxtApp.$wasm.loader_check(salt(),val));
   }
 
   async function retrieveLocalPassword ( ) {
     const nuxtApp = useNuxtApp();
     const {salt} = useSecurity();
-    const {getStorage} = useLocalStorage();
-    const val = await getStorage("lp");
+    const storage = useLocalStorage();
+    await storage.init();
+    const val = await storage.getStorage("lp");
     return  nuxtApp.$wasm.loader_out(salt(), val);
   }
 
   async function clearLocalPassword ( ) {
-    const {removeStorage} = useLocalStorage();
-    await removeStorage("lp");
+    const storage = useLocalStorage();
+    await storage.init();
+    await storage.removeStorage("lp");
   }
 
   function setValidationStatus(status) {
@@ -105,6 +130,7 @@ export const useUserStore =
     storeLocalPassword, retrieveLocalPassword, clearLocalPassword,
     userData, setUserData,
     clearAll,
-    validationStatus, setValidationStatus
+    validationStatus, setValidationStatus,
+    authAttempt, addAuthAttempt,
   };
 });

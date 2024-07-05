@@ -1,6 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import {resolve} from "path";
 export default defineNuxtConfig({
+  vite: {
+    define: {
+      'process.env.DEBUG': 'true',
+    },
+  },
   ssr: true,
   devServer: {
     host: '0.0.0.0',

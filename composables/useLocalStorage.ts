@@ -1,101 +1,98 @@
 import { set, get, del, clear, keys } from 'idb-keyval';
-export  const useLocalStorage = () => {
-  const useIndexedDB = async () => {
+
+export const useLocalStorage = () => {
+  let useIndexedDB = false;
+
+  const testIndexedDB = async () => {
     if (import.meta.client) {
       try {
         await set('test-key', 'test-value');
+        const value = await get('test-key');
+        console.log("[useStorage.testIndexedDB] Testing getting \"test-key\" = " + value);
+        if (value !== 'test-value') throw new Error('Test value mismatch');
         await del('test-key');
         return true;
       } catch (error) {
-        console.warn('IndexedDB not available, falling back to localStorage');
+        console.warn('IndexedDB not available, falling back to localStorage:', error);
         return false;
       }
     }
     return false;
   };
 
-  const storage = async ()=> {
-    await useIndexedDB() ? idbKeyval : localStorage;
-  }
+  const init = async () => {
+    try {
+      useIndexedDB = await testIndexedDB();
+    } catch (error) {
+      console.error('Error initializing storage:', error);
+      useIndexedDB = false;
+    }
+  };
 
-   const setStorage = async (key, value) => {
+  const setStorage = async (key, value) => {
     if (import.meta.client) {
-      if (storage === localStorage) {
-        localStorage.setItem(key, JSON.stringify(value));
-      } else {
+      if (useIndexedDB) {
         await set(key, value);
+      } else {
+        localStorage.setItem(key, JSON.stringify(value));
       }
     }
   };
 
-   const getStorage = async (key) => {
+  const getStorage = async (key) => {
     if (import.meta.client) {
-      if (storage === localStorage) {
-        return JSON.parse(localStorage.getItem(key));
-      } else {
-        return await get(key);
+      try {
+        if (useIndexedDB) {
+          console.log("[getStorage] Using indexedDB");
+          return await get(key);
+        } else {
+          console.log("[getStorage] Using local storage");
+          return JSON.parse(localStorage.getItem(key));
+        }
+      } catch (error) {
+        console.error('Error getting from storage:', error);
+        return null;
       }
     }
   };
 
-   const clearStorage = async () => {
+  const clearStorage = async () => {
     if (import.meta.client) {
-      if (storage === localStorage) {
-        localStorage.clear();
-      } else {
+      if (useIndexedDB) {
         await clear();
-      }
-    }
-  }
-
-   const removeStorage = async (key) => {
-    if (import.meta.client) {
-      if (storage === localStorage) {
-        localStorage.removeItem(key);
       } else {
-        await del(key);
+        localStorage.clear();
       }
     }
-  }
+  };
 
-   const clearAllKeys = async () => {
-    if (import. meta.client) {
-      await clear();
+  const removeStorage = async (key) => {
+    if (import.meta.client) {
+      if (useIndexedDB) {
+        await del(key);
+      } else {
+        localStorage.removeItem(key);
+      }
     }
-  }
+  };
 
-   const getAllKeys = async () => {
-    if (import. meta.client) {
-      return await keys();
+  const getAllKeys = async () => {
+    if (import.meta.client) {
+      if (useIndexedDB) {
+        return await keys();
+      } else {
+        return Object.keys(localStorage);
+      }
     }
-  }
+    return [];
+  };
 
-   const setIdb = async (key, value) => {
-    if (import. meta.client) {
-      await set(key, value);
-    }
-  }
-
-   const getIdb = async (key) => {
-    if (import. meta.client) {
-      return await get(key);
-    }
-  }
-
-   const deleteIdb = async (key) => {
-    if (import. meta.client) {
-      await del(key);
-    }
-  }
   return {
+    init,
     setStorage,
     getStorage,
     clearStorage,
     removeStorage,
-    clearAllKeys,
     getAllKeys,
-    setIdb,
-    getIdb,
-    deleteIdb,
-  }
-}
+  };
+};
