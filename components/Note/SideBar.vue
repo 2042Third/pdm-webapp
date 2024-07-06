@@ -40,6 +40,14 @@ const isOpen = ref(false)
 const menuItems = ref([
   { id: 1, text: 'Option 1', link: '/option1', icon: 'LazyIconsSubwayHome' },
   { id: 2, text: 'Option 2', link: '/option2', icon: 'LazyIconsNoteDefault' },
+  { id: 3, text: 'Option 3', link: '/option3', icon: 'LazyIconsChatDefault' },
+  { id: 4, text: 'Option 4', link: '/option4', icon: 'LazyIconsSubwayKey' },
+  { id: 5, text: 'Option 5', link: '/option5', icon: 'LazyIconsAccount' },
+  { id: 6, text: 'Option 6', link: '/option6', icon: 'LazyIconsCog' },
+  { id: 7, text: 'Option 7', link: '/option7', icon: 'LazyIconsAccount' },
+  { id: 8, text: 'Option 8', link: '/option8', icon: 'LazyIconsCog' },
+  { id: 9, text: 'Option 9', link: '/option9', icon: 'LazyIconsAccount' },
+  { id: 10, text: 'Option 10', link: '/option10', icon: 'LazyIconsCog' },
   // Add more menu items as needed
 ])
 
