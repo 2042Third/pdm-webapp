@@ -15,11 +15,10 @@
         <ul class="space-y-2 font-medium">
           <!-- Add your menu items here -->
           <li v-for="item in menuItems" :key="item.id" class="w-full">
-            <NuxtLink :to="item.link"
-                      class="flex flex-row items-center gap-4 p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+            <div class="flex flex-row items-center gap-4 p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
               <component :is="item.icon" v-if="item.icon" />
               {{ item.text }}
-            </NuxtLink>
+            </div>
           </li>
         </ul>
       </div>
@@ -34,6 +33,7 @@
 </template>
 
 <script setup lang="ts">
+
 import { ref } from 'vue'
 
 const isOpen = ref(false)
