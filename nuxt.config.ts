@@ -54,6 +54,7 @@ export default defineNuxtConfig({
     "@nuxt/ui",
     "@nuxt/image",
     '@pinia-plugin-persistedstate/nuxt',
+    '@formkit/auto-animate/nuxt',
   ],
   piniaPersistedstate: {
     cookieOptions: {

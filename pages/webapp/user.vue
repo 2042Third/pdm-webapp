@@ -125,8 +125,8 @@
             Get Notes
           </UButton>
 
-          <div v-if="notes.notesList.length" class="space-y-4">
-            <div v-for="note in notes.notesList" :key="note.noteid" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+          <div ref="parent" v-if="notes.notesList.length" class="space-y-4">
+            <div  v-for="note in notes.notesList" :key="note.noteid" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
               <div class="flex justify-between items-center mb-2">
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-white">Note ID: {{ note.noteid }}</h2>
                 <span class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(note.time) }}</span>
@@ -143,6 +143,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useNotesStore } from '~/stores/notesStore'
+
+const [parent] = useAutoAnimate();
 
 const nuxtApp = useNuxtApp();
 const user = useUserStore();
