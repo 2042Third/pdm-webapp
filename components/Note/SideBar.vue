@@ -10,7 +10,7 @@
       </svg>
     </button>
 
-    <div :class="['right-menu', { 'open': isOpen }]">
+    <div ref="menuRef" :class="['right-menu', { 'open': isOpen }, 'md:block']">
       <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
         <ul class="space-y-2 font-medium">
           <!-- Add your menu items here -->
@@ -24,39 +24,74 @@
       </div>
     </div>
 
-    <div :class="['content-wrapper', { 'shifted': isOpen }]">
+    <div :class="['content-wrapper relative', { 'md:mr-64': isOpen }]">
       <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
         <slot />
       </div>
+      <Transition name="fade">
+        <CommonMatteOverlay  v-if="isOpen" @click="toggleMenu" />
+      </Transition>
     </div>
+
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 
-import { ref } from 'vue'
+const isOpen = ref(false);
+const isMediumScreen = ref(false);
+const menuRef = ref(null);
 
-const isOpen = ref(false)
 const menuItems = ref([
-  { id: 1, text: 'Option 1', link: '/option1', icon: 'LazyIconsSubwayHome' },
-  { id: 2, text: 'Option 2', link: '/option2', icon: 'LazyIconsNoteDefault' },
-  { id: 3, text: 'Option 3', link: '/option3', icon: 'LazyIconsChatDefault' },
-  { id: 4, text: 'Option 4', link: '/option4', icon: 'LazyIconsSubwayKey' },
-  { id: 5, text: 'Option 5', link: '/option5', icon: 'LazyIconsAccount' },
-  { id: 6, text: 'Option 6', link: '/option6', icon: 'LazyIconsCog' },
-  { id: 7, text: 'Option 7', link: '/option7', icon: 'LazyIconsAccount' },
-  { id: 8, text: 'Option 8', link: '/option8', icon: 'LazyIconsCog' },
-  { id: 9, text: 'Option 9', link: '/option9', icon: 'LazyIconsAccount' },
-  { id: 10, text: 'Option 10', link: '/option10', icon: 'LazyIconsCog' },
+  { id: 1, text: 'Option 1', link: '/option1' },
+  { id: 2, text: 'Option 2', link: '/option2' },
+  { id: 3, text: 'Option 3', link: '/option3' },
+  { id: 4, text: 'Option 4', link: '/option4' },
+  { id: 5, text: 'Option 5', link: '/option5' },
+  { id: 6, text: 'Option 6', link: '/option6' },
+  { id: 7, text: 'Option 7', link: '/option7' },
+  { id: 8, text: 'Option 8', link: '/option8' },
+  { id: 9, text: 'Option 9', link: '/option9' },
+  { id: 10, text: 'Option 10', link: '/option10' },
   // Add more menu items as needed
-])
+]);
 
 const toggleMenu = () => {
-  isOpen.value = !isOpen.value
+  isOpen.value = !isOpen.value;
 }
+
+const checkScreenSize = () => {
+  isMediumScreen.value = window.innerWidth < 768;
+  if (isMediumScreen.value) {
+    isOpen.value = false;
+    console.log("[SideBar.checkScreenSize] Menu closed");
+  }
+}
+
+
+
+onMounted(() => {
+  checkScreenSize()
+  window.addEventListener('resize', checkScreenSize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkScreenSize)
+})
+
 </script>
 
 <style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 .right-menu-container {
   position: relative;
   height: 100%;
@@ -82,13 +117,18 @@ const toggleMenu = () => {
   padding: 1rem; /* Add padding to match the left sidebar layout */
 }
 
-.content-wrapper.shifted {
-  margin-right: 256px; /* 16rem = 256px */
-}
+@media (min-width: 768px) {
+  .right-menu {
+    right: 0;
+  }
 
-@media (max-width: 640px) {
-  .content-wrapper.shifted {
-    margin-right: 0;
+  .content-wrapper {
+    margin-right: 256px;
+    transition: margin-right 0.3s ease-in-out;
+  }
+
+  .content-wrapper.mr-64 {
+    margin-left: 256px; /* 16rem = 256px */
   }
 }
 </style>
