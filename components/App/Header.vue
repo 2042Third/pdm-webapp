@@ -91,11 +91,4 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import {initDrawers, } from 'flowbite'
-
-// Initialize the drawers
-onMounted(() => {
-  initDrawers();
-})
 </script>

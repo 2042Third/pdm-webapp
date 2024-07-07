@@ -14,9 +14,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         await user.loadSessionKey();
         console.log("[Auth Middleware] user session key loaded: \""+user.sessionKey+"\"");
         if (!user.sessionKey || user.sessionKey === "" || user.sessionKey.length < 1 ) {
-          console.log("[Auth Middleware] user session key not found, redirecting to login");
+          console.log("[Auth Middleware] user session key not found, continue.");
           await user.clearAll();
           user.addAuthAttempt();
+          return;
           // return navigateTo('/login'); // Adjust the route as needed
         }
 

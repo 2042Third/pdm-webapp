@@ -19,17 +19,18 @@
       </svg>
     </div>
 
-    <div ref="menuRef" :class="['left-menu', { 'open': isOpen }, 'lg:block']">
+    <div ref="menuRef" :class="['left-menu', { 'open': state.leftMenuOpen }, 'lg:block']">
 
       <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
         <MainNav/>
       </div>
     </div>
 
-    <div :class="['content-wrapper relative', { 'lg:ml-64': isOpen }]">
+    <div :class="['content-wrapper relative', { 'lg:ml-64': state.leftMenuOpen || state.isLargeScreen }]">
       <slot />
       <Transition name="fade">
-        <CommonMatteOverlay v-if="isOpen && !isLargeScreen" style="z-index: 31" @click="toggleMenu" />
+        <CommonMatteOverlay v-if="state.leftMenuOpen && !state.isLargeScreen" style="z-index: 31" @click="toggleMenu" />
+<!--        <CommonMatteOverlay v-if="isOpen && !isLargeScreen" style="z-index: 31" @click="toggleMenu" />-->
       </Transition>
     </div>
   </div>
@@ -38,21 +39,15 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 
-const isOpen = ref(false);
-const isLargeScreen = ref(false);
+const state = appStatesStore();
 const menuRef = ref(null);
 
 const toggleMenu = () => {
-  isOpen.value = !isOpen.value;
+  state.setLeftMenu(!state.leftMenuOpen);
 }
 
 const checkScreenSize = () => {
-  isLargeScreen.value = window.innerWidth >= 1024; // 1024px is the default breakpoint for 'lg' in Tailwind
-  if (isLargeScreen.value) {
-    isOpen.value = true;
-  } else {
-    isOpen.value = false;
-  }
+  state.setIsLargeScreen( window.innerWidth >= 1024); // 1024px is the default breakpoint for 'lg' in Tailwind
 }
 
 onMounted(() => {
