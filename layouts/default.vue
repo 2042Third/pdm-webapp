@@ -22,14 +22,7 @@
     <div ref="menuRef" :class="['left-menu', { 'open': isOpen }, 'md:block']">
 
       <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-        <ul class="space-y-2 font-medium">
-          <li v-for="item in menuItems" :key="item.id" class="w-full">
-            <NuxtLink :to="item.link" class="flex flex-row items-center gap-4 p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-              <component :is="item.icon" v-if="item.icon" />
-              {{ item.text }}
-            </NuxtLink>
-          </li>
-        </ul>
+        <MainNav/>
       </div>
     </div>
 
@@ -49,22 +42,6 @@ const isOpen = ref(false);
 const isLargeScreen = ref(false);
 const menuRef = ref(null);
 
-import IconsSubwayHome from '~/components/Icons/Subway/Home.vue';
-import IconsNoteDefault from '~/components/Icons/Note/Default.vue';
-import IconsChatDefault from '~/components/Icons/Chat/Default.vue';
-import IconsSubwayKey from '~/components/Icons/Subway/Key.vue';
-import IconsAccount from '~/components/Icons/Account.vue';
-import IconsCog from '~/components/Icons/Cog.vue';
-
-const menuItems = shallowRef([
-  { id: 1, text: 'Home', link: '/webapp/', icon: IconsSubwayHome },
-  { id: 2, text: 'Notes', link: '/webapp/notes', icon: IconsNoteDefault },
-  { id: 3, text: 'Chat', link: '/webapp/chat', icon: IconsChatDefault },
-  { id: 4, text: 'Tools', link: '/webapp/tools', icon: IconsSubwayKey },
-  { id: 5, text: 'User', link: '/webapp/user', icon: IconsAccount },
-  { id: 6, text: 'Settings', link: '/webapp/settings', icon: IconsCog },
-  { id: 7, text: 'About', link: '/webapp/about' },
-]);
 
 const toggleMenu = () => {
   isOpen.value = !isOpen.value;
