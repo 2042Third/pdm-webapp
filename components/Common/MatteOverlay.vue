@@ -2,8 +2,7 @@
   <div
       class="matte-glass cursor-pointer
       opacity-70
-      absolute inset-0 flex
-      items-center justify-center
+      fixed inset-0 flex
       "
   >
   </div>
