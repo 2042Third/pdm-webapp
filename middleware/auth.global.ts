@@ -1,12 +1,16 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
   console.log('Middleware: page from ' + from.path + ' to ' + to.path);
 
+
+
   if (import.meta.client) {
     const user = useUserStore();
     const { performGetUserData } = useAuthAction();
     const { createSecureContext } = useSecurity();
     const {get_user_url} = useApiStore();
     const userConfig = useUserConfigStore();
+    const appStates = appStatesStore();
+    appStates.setOnPage(to.path);
 
     try {
       if (!user.isLoggedIn || user.authAttempt<2) {

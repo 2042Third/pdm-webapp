@@ -3,6 +3,11 @@ defineStore('appStates', () => {
   const rightMenuOpen = ref(false);
   const leftMenuOpen = ref(false);
   const isLargeScreen = ref(true);
+  const onPage = ref('home');
+
+  function setOnPage (value) {
+    onPage.value = value;
+  }
 
   function setRightMenu(value) {
     rightMenuOpen.value = value;
@@ -21,7 +26,8 @@ defineStore('appStates', () => {
     leftMenuOpen,
     setRightMenu,
     setLeftMenu,
-    isLargeScreen, setIsLargeScreen
+    isLargeScreen, setIsLargeScreen,
+    onPage, setOnPage,
 
   };
 
