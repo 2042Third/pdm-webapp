@@ -1,12 +1,13 @@
 <template>
   <div class="container-wrapper">
-    <div v-for="(container, index) in containers" :key="index" class="container">
+    <div v-for="(container, index) in containers" :key="index" class="container" >
       <TransitionGroup
           :name="transitionName"
           tag="div"
           @before-leave="beforeLeave"
           @leave="leave"
           @enter="enter"
+          v-auto-animate
       >
         <div
             v-for="item in container"
@@ -22,7 +23,7 @@
     <div ref="centerStage" class="center-stage"></div>
     <div v-if="movingItemData"
          :style="movingItemStyle"
-         class="moving-item"
+         class="item"
     >
       {{ movingItemData.item.content }}
     </div>
@@ -78,18 +79,14 @@ const moveItem = async (item, fromIndex) => {
     return
   }
 
-  movingItemId.value = item.id
+  movingItemId.value = item.id;
 
-  const startRect = itemEl.getBoundingClientRect()
-  const centerRect = centerStage.value.getBoundingClientRect()
+  const startRect = itemEl.getBoundingClientRect();
+  const centerRect = centerStage.value.getBoundingClientRect(); // mid destination
 
   movingItemData.value = {
     item,
     startPos: { x: startRect.left, y: startRect.top },
-    midPos: {
-      x: centerRect.left + (centerRect.width - startRect.width) / 2,
-      y: centerRect.top + (centerRect.height - startRect.height) / 2
-    },
     endPos: null,
     currentPos: { x: startRect.left, y: startRect.top }
   }
@@ -97,11 +94,8 @@ const moveItem = async (item, fromIndex) => {
   // Remove item from the source container
   containers.value[fromIndex] = containers.value[fromIndex].filter(i => i.id !== item.id)
 
-  // Animate to center
-  await animateTo(movingItemData.value.midPos, 0.3)
-
   // Add item to the target container
-  containers.value[toIndex].push(item)
+  containers.value[toIndex].unshift(item)
 
   // Wait for the DOM to update
   await nextTick()
@@ -113,7 +107,7 @@ const moveItem = async (item, fromIndex) => {
     movingItemData.value.endPos = { x: endRect.left, y: endRect.top }
 
     // Animate to final position
-    await animateTo(movingItemData.value.endPos, 0.3, 0.3)
+    await animateTo(movingItemData.value.endPos, 0.5);
 
     // Clean up
     movingItemData.value = null
@@ -148,7 +142,7 @@ const leave = (el, done) => {
     $gsap.to(el, {
       opacity: 0,
       scale: 0.8,
-      duration: 0.3,
+      duration: 0,
       onComplete: done
     })
   } else {
@@ -159,8 +153,9 @@ const leave = (el, done) => {
 const enter = (el, done) => {
   if (el.dataset.id !== movingItemId.value) {
     $gsap.fromTo(el,
-        { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, duration: 0.3, onComplete: done }
+        { opacity: 0},
+        { opacity: 1, scale: 1, duration: 0.4, delay: 0.4,
+          onComplete: done }
     )
   } else {
     el.style.opacity = 0
@@ -187,6 +182,8 @@ const enter = (el, done) => {
   background-color: #f0f0f0;
   margin: 5px;
   padding: 10px;
+  width: 100px;
+  height: 40px;
   cursor: pointer;
 }
 
