@@ -14,20 +14,34 @@
 
     <div ref="menuRef" :class="['right-menu', { 'open': isOpen }, 'md:block']">
       <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-        <ul class="space-y-2 font-medium">
-          <!-- Add your menu items here -->
-          <li v-for="item in menuItems" :key="item.id" class="w-full">
-            <div class="flex flex-row items-center gap-4 p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-              <component :is="item.icon" v-if="item.icon" />
-              {{ item.text }}
+        <div class="sticky top-0 bg-gray-50 dark:bg-gray-800  z-10">
+          <UButtonGroup size="sm" orientation="horizontal">
+            <UButton label="Get Notes" color="white"
+                     :disabled="user.isLoggedIn === false"
+                     @click="getNotes"
+            />
+            <UButton label="New Note" color="white"
+                     :disabled="user.isLoggedIn === false"
+            />
+          </UButtonGroup>
+        </div>
+        <ul class="space-y-2 font-medium mt-4">
+          <li v-for="note in notes.notesList" :key="note.noteid" class="w-full">
+            <div class="flex flex-col items-start gap-1 p-2 text-gray-900 rounded-lg
+                    dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                 @click="openNote(note.noteid)"
+            >
+              <h2 class="text-md font-semibold text-gray-800 dark:text-white">Note ID: {{ note.noteid }}</h2>
+              <span class="text-xs text-gray-500 dark:text-gray-400">{{ formatDate(note.time) }}</span>
+              <p class="text-gray-600 dark:text-gray-300">{{ note.heading }}</p>
             </div>
           </li>
         </ul>
       </div>
     </div>
 
-    <div :class="['content-wrapper relative', { 'md:mr-64': isOpen }]">
-      <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+    <div :class="['content-wrapper  flex-grow', { 'md:mr-64': isOpen }]">
+      <div class="p-4 h-full border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
         <slot />
       </div>
       <Transition name="fade">
@@ -39,29 +53,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 
+const user = useUserStore();
+const api = useApiStore();
+const notes = useNotesStore();
 const isOpen = ref(false);
 const isMediumScreen = ref(false);
 const menuRef = ref(null);
+const noteEditor = useNoteEditorStore();
 
-const menuItems = ref([
-  { id: 1, text: 'Option 1', link: '/option1' },
-  { id: 2, text: 'Option 2', link: '/option2' },
-  { id: 3, text: 'Option 3', link: '/option3' },
-  { id: 4, text: 'Option 4', link: '/option4' },
-  { id: 5, text: 'Option 5', link: '/option5' },
-  { id: 6, text: 'Option 6', link: '/option6' },
-  { id: 7, text: 'Option 7', link: '/option7' },
-  { id: 8, text: 'Option 8', link: '/option8' },
-  { id: 9, text: 'Option 9', link: '/option9' },
-  { id: 10, text: 'Option 10', link: '/option10' },
-  // Add more menu items as needed
-]);
+const { performGetNotes } = useNotesAction();
+const { unixToHumanReadableTime } = useUtil();
 
 const toggleMenu = () => {
   isOpen.value = !isOpen.value;
 }
+
+const formatDate = (timestamp) => {
+  return new Date(timestamp).toLocaleString();
+};
 
 const checkScreenSize = () => {
   isMediumScreen.value = window.innerWidth < 768;
@@ -70,7 +81,14 @@ const checkScreenSize = () => {
   }
 }
 
+function getNotes() {
+  performGetNotes(api.get_notes_url);
+}
 
+function openNote(noteid) {
+  console.log('Opening note:', noteid);
+  noteEditor.setOpenNote(notes.notesSet[noteid]);
+}
 
 onMounted(() => {
   checkScreenSize()
@@ -115,6 +133,7 @@ onUnmounted(() => {
 
 .content-wrapper {
   transition: margin-right 0.3s ease-in-out;
+  height: 100%;
   padding: 1rem; /* Add padding to match the left sidebar layout */
 }
 
@@ -125,6 +144,7 @@ onUnmounted(() => {
 
   .content-wrapper {
     margin-right: 256px;
+
     transition: margin-right 0.3s ease-in-out;
   }
 

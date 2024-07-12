@@ -2,20 +2,26 @@ import { defineStore } from 'pinia'
 
 export const useNotesStore =
   defineStore('notes', () => {
-  const notesList = ref([])
+  const notesArray = ref([]);
+  const notesSet = ref({});
+
+  const notesList = computed(() =>
+    notesArray.value.filter((note) => note.deleted !== 1));
 
   function setNotesList(value) {
-    notesList.value = value
+    notesArray.value = value;
   }
 
   function addNoteToList(note) {
-    notesList.value.push(note)
+    notesArray.value.push(note);
+    notesSet.value[note.noteid] = note;
   }
 
   return {
     notesList,
+    notesSet,
     setNotesList,
     addNoteToList
-  }
-})
+  };
+});
 

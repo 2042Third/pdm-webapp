@@ -94,6 +94,7 @@ onUnmounted(() => {
 
 .content-wrapper {
   transition: margin-left 0.3s ease-in-out;
+  height: max(100vh, 100%);
   padding: 1rem;
 }
 

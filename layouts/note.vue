@@ -1,5 +1,5 @@
 <template>
-  <div class="left-menu-container">
+  <div class="left-menu-container h-screen flex flex-col">
     <button @click="toggleMenu"
             type="button"
             class="toggle-menu-button inline-flex flex-row items-center gap-4 p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg
@@ -20,17 +20,15 @@
     </div>
 
     <div ref="menuRef" :class="['left-menu', { 'open': state.leftMenuOpen }, 'lg:block']">
-
       <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
         <MainNav/>
       </div>
     </div>
 
-    <div :class="['content-wrapper relative', { 'lg:ml-64': state.leftMenuOpen || state.isLargeScreen }]">
+    <div :class="['content-wrapper flex-grow overflow-hidden', { 'lg:ml-64': state.leftMenuOpen || state.isLargeScreen }]">
       <slot />
       <Transition name="fade">
         <CommonMatteOverlay v-if="state.leftMenuOpen && !state.isLargeScreen" style="z-index: 31" @click="toggleMenu" />
-<!--        <CommonMatteOverlay v-if="isOpen && !isLargeScreen" style="z-index: 31" @click="toggleMenu" />-->
       </Transition>
     </div>
   </div>
@@ -47,7 +45,7 @@ const toggleMenu = () => {
 }
 
 const checkScreenSize = () => {
-  state.setIsLargeScreen( window.innerWidth >= 1024); // 1024px is the default breakpoint for 'lg' in Tailwind
+  state.setIsLargeScreen(window.innerWidth >= 1024); // 1024px is the default breakpoint for 'lg' in Tailwind
 }
 
 onMounted(() => {
@@ -73,7 +71,6 @@ onUnmounted(() => {
 
 .left-menu-container {
   position: relative;
-  height: 100%;
   width: 100%;
 }
 
@@ -93,7 +90,7 @@ onUnmounted(() => {
 
 .content-wrapper {
   transition: margin-left 0.3s ease-in-out;
-  padding: 1rem;
+  height: 100%;
 }
 
 @media (min-width: 1024px) {

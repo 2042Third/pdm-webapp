@@ -141,7 +141,7 @@ const leave = (el, done) => {
   if (el.dataset.id !== movingItemId.value) {
     $gsap.to(el, {
       opacity: 0,
-      scale: 0.8,
+      scale: 1,
       duration: 0,
       onComplete: done
     })
