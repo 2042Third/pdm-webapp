@@ -28,7 +28,7 @@
         <ul class="space-y-2 font-medium mt-4">
           <li v-for="note in notes.notesList" :key="note.noteid" class="w-full">
             <div class="flex flex-col items-start gap-1 p-2 text-gray-900 rounded-lg
-                    dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                    dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer group"
                  @click="openNote(note.noteid)"
             >
               <h2 class="text-md font-semibold text-gray-800 dark:text-white">Note ID: {{ note.noteid }}</h2>
