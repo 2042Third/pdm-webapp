@@ -1,10 +1,13 @@
 <template>
-  <section>
-    <p>This page will be displayed at the /about route.</p>
-  </section>
+  <div>
+<!--    <AnimateTeleport/>-->
+    <AnimateTransition/>
+  </div>
 </template>
 
 <script setup lang="ts">
+  import AnimateTransition from "~/components/AnimateTransition.vue";
+
   definePageMeta({
     middleware: ["about"]
   });

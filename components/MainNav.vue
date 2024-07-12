@@ -76,7 +76,7 @@ const appStates = appStatesStore()
 
 const getLinkClasses = (routeName) => {
   const baseClasses = "flex flex-row items-center gap-4 p-2 text-gray-900 rounded-lg dark:text-white group"
-  const selectedClasses = "bg-gray-100 dark:bg-gray-1000"
+  const selectedClasses = "bg-gray-100 dark:bg-gray-700"
 
   return {
     [baseClasses]: true,
