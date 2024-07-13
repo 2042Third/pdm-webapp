@@ -17,6 +17,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         console.log("[Auth Middleware] user not logged in, trying to load session key");
         await user.loadSessionKey();
         console.log("[Auth Middleware] user session key loaded: \""+user.sessionKey+"\"");
+
+        await user.loadRefreshKey();
+        console.log("[Auth Middleware] user refresh key loaded: \""+user.refreshKey+"\"");
         if (!user.sessionKey || user.sessionKey === "" || user.sessionKey.length < 1 ) {
           console.log("[Auth Middleware] user session key not found, continue.");
           await user.clearAll();

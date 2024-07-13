@@ -69,9 +69,20 @@
           <text>
             Session Key Expiration: {{unixToHumanReadableTime(user.sessionKeyExpiration)}}
           </text>
+
           <text>
             Session Key Validation Status: {{user.validationStatus}}
           </text>
+          <text>
+            Refresh Key : {{user.refreshKey}}
+          </text>
+          <text>
+            Refresh Key Expiration: {{unixToHumanReadableTime(user.refreshKeyExpiration)}}
+          </text>
+          <text>
+            Refresh Key Status: {{user.hasRefreshKey}}
+          </text>
+
 
         </client-only>
       </CommonContainerDotted>
@@ -109,6 +120,17 @@
                  dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
           Validate Session Key
+        </UButton>
+        <UButton
+            @click="getValidationRefreshKey()"
+            class="w-full h-full text-white place-content-center
+                 basis-1/5 bg-blue-700 hover:bg-blue-800
+                 focus:ring-4 focus:outline-none focus:ring-blue-300
+                 font-medium rounded-lg text-sm
+                 px-5 py-2.5 text-center dark:bg-blue-600
+                 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Validate Refresh Key
         </UButton>
       </CommonContainerDotted>
       <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
@@ -151,7 +173,8 @@ const user = useUserStore();
 const api = useApiStore();
 const notes = useNotesStore();
 const userConfig = useUserConfigStore();
-const { performLogin, performLoginWithRefresh,  performLogout, performValidation } = useAuthAction();
+const { performLogin, performLoginWithRefresh, performValidateRefreshKey,
+  performLogout, performValidation } = useAuthAction();
 const { performGetNotes } = useNotesAction();
 const { unixToHumanReadableTime } = useUtil();
 
@@ -227,6 +250,10 @@ async function getUserDataPOST(){
 
 async function getValidation () {
   await performValidation(api.get_validation_url);
+}
+
+async function getValidationRefreshKey () {
+  await performValidateRefreshKey(api.get_validation_url);
 }
 
 function decrypt (input) {

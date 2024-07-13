@@ -57,6 +57,10 @@ export const useAuthAction = () => {
 
       if (response && response.sessionKey) {
         await user.setSessionKey(response);
+        if (response.refreshKey) {
+          await user.setRefreshKey(response);
+          console.log("Received refresh key.");
+        }
         return true;
       } else {
         console.error('Login with Refresh failed: No session key received');
@@ -211,6 +215,44 @@ export const useAuthAction = () => {
     }
   }
 
+  const performValidateRefreshKey = async (url) => {
+    try {
+      if (!user.refreshKey) {
+        console.error('No refresh key found');
+        return false;
+      }
+      const response = await $fetch(url, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Session-Key": user.sessionKey,
+        },
+        body: {
+          "refreshKey": user.refreshKey
+        }
+      });
+
+      console.log('Validate Refresh Key:', response);
+
+      if (response) {
+        user.setValidationStatus(true);
+
+        return true;
+      } else {
+        console.error('Validate Refresh Key call failed');
+        user.setValidationStatus(false);
+        return false;
+      }
+    } catch (error) {
+      console.error('Validate Refresh Key call returned error: ', error.response ? error.response._data : error.message);
+      // Handle error (e.g., show error message
+      user.setValidationStatus(false);
+      return false;
+    }
+
+  }
+
+
   return {
     performLogin,
     performLoginWithRefresh,
@@ -218,7 +260,8 @@ export const useAuthAction = () => {
     performGetUserData,
     performGetUserDataPOST,
     performCSRFGet,
-    performValidation
+    performValidation,
+    performValidateRefreshKey,
   }
 
 }

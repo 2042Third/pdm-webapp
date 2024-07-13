@@ -110,6 +110,7 @@ export const useUserStore =
       if (!storageInitialized){await storage.init();}
       const val = await storage.getStorage("rk");
       if (!val || val === "" || val === "null" || val === "undefined") {
+        hasRefreshKey.value = false;
         return;
       }
       const parsedVal = JSON.parse(nuxtApp.$wasm.loader_out(salt(),val));
@@ -119,7 +120,7 @@ export const useUserStore =
     }
     catch (e) {
       console.error("Error loading refresh key: ", e);
-
+      hasRefreshKey.value = false;
       return;
     }
   }
@@ -168,6 +169,7 @@ export const useUserStore =
     sessionKeyExpiration.value = 0;
     await clearSessionKey();
     await clearLocalPassword ();
+    // await clearRefreshKey();
   }
 
   return {
