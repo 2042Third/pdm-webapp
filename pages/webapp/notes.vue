@@ -8,6 +8,7 @@
             v-model="note"
             class="w-full h-full text-md"
             placeholder="Note"
+            color="white"
             textareaClass="h-full"
         />
       </CommonContainerDotted>

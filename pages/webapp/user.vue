@@ -151,7 +151,7 @@ const user = useUserStore();
 const api = useApiStore();
 const notes = useNotesStore();
 const userConfig = useUserConfigStore();
-const { performLogin, performLogout, performValidation } = useAuthAction();
+const { performLogin, performLoginWithRefresh,  performLogout, performValidation } = useAuthAction();
 const { performGetNotes } = useNotesAction();
 const { unixToHumanReadableTime } = useUtil();
 
@@ -177,7 +177,8 @@ async function login() {
     user.setEmail(input_email.value);
     createContext();
     user.makeLoginPs(input_password.value);
-    if (await performLogin(api.signin_url)) {
+    if (await performLoginWithRefresh(api.signin_url)) {
+    // if (await performLogin(api.signin_url)) {
       if (userConfig.storesPasswordLocally) {
         await user.storeLocalPassword(input_password.value);
       }

@@ -9,10 +9,19 @@ export const useUserStore =
   const userData = ref(null);
   const validationStatus = ref(false);
   const authAttempt = ref(0);
+  const storageInitialized = ref(false);
+  const refreshKey = ref("");
+  const hasRefreshKey = ref(false);
+  const refreshKeyExpiration = ref(0);
+
 
   const isLoggedIn = computed(()=>{
     return sessionKey.value && sessionKey.value !== "";
   });
+
+  function setStorageInitialized(value) {
+    storageInitialized.value = value
+  }
 
   function addAuthAttempt() {
     authAttempt.value++;
@@ -41,7 +50,7 @@ export const useUserStore =
     const {salt} = useSecurity();
 
     const storage = useLocalStorage();
-    await storage.init();
+    if (!storageInitialized){await storage.init();}
     sessionKey.value = key.sessionKey;
     sessionKeyExpiration.value = key.expirationTime;
     await storage.setStorage("us", nuxtApp.$wasm.loader_check(salt(),JSON.stringify(key)));
@@ -53,7 +62,7 @@ export const useUserStore =
       const nuxtApp = useNuxtApp();
       const {salt} = useSecurity();
       const storage = useLocalStorage();
-      await storage.init();
+      if (!storageInitialized){await storage.init();}
       const val = await storage.getStorage("us");
       if (!val || val === "" || val === "null" || val === "undefined") {
         return;
@@ -72,7 +81,7 @@ export const useUserStore =
 
   async function clearSessionKey() {
     const storage = useLocalStorage();
-    await storage.init();
+    if (!storageInitialized){await storage.init();}
     sessionKey.value = "";
     await storage.removeStorage("us");
   }
@@ -82,11 +91,52 @@ export const useUserStore =
     loginPs.value = nuxtApp.$wasm.get_hash(value+value);
   }
 
+  async function  setRefreshKey(key) {
+    const nuxtApp = useNuxtApp();
+    const {salt} = useSecurity();
+    const storage = useLocalStorage();
+    if (!storageInitialized){await storage.init();}
+    refreshKey.value = key.refreshKey;
+    refreshKeyExpiration.value = key.refreshKeyExpirationTime;
+    hasRefreshKey.value = true;
+    await storage.setStorage("rk", nuxtApp.$wasm.loader_check(salt(),JSON.stringify(key)));
+  }
+
+  async function loadRefreshKey() {
+    try {
+      const nuxtApp = useNuxtApp();
+      const {salt} = useSecurity();
+      const storage = useLocalStorage();
+      if (!storageInitialized){await storage.init();}
+      const val = await storage.getStorage("rk");
+      if (!val || val === "" || val === "null" || val === "undefined") {
+        return;
+      }
+      const parsedVal = JSON.parse(nuxtApp.$wasm.loader_out(salt(),val));
+      refreshKey.value = parsedVal.refreshKey;
+      refreshKeyExpiration.value = parsedVal.refreshKeyExpirationTime;
+      hasRefreshKey.value = true;
+    }
+    catch (e) {
+      console.error("Error loading refresh key: ", e);
+
+      return;
+    }
+  }
+
+  async function clearRefreshKey() {
+    const storage = useLocalStorage();
+    if (!storageInitialized){await storage.init();}
+    refreshKey.value = "";
+    hasRefreshKey.value = false;
+    await storage.removeStorage("rk");
+  }
+
   async function storeLocalPassword (val ) {
     const nuxtApp = useNuxtApp();
     const {salt} = useSecurity();
     const storage = useLocalStorage();
-    await storage.init();
+    if (!storageInitialized){await storage.init();}
     await storage.setStorage("lp", nuxtApp.$wasm.loader_check(salt(),val));
   }
 
@@ -94,14 +144,14 @@ export const useUserStore =
     const nuxtApp = useNuxtApp();
     const {salt} = useSecurity();
     const storage = useLocalStorage();
-    await storage.init();
+    if (!storageInitialized){await storage.init();}
     const val = await storage.getStorage("lp");
     return  nuxtApp.$wasm.loader_out(salt(), val);
   }
 
   async function clearLocalPassword ( ) {
     const storage = useLocalStorage();
-    await storage.init();
+    if (!storageInitialized){await storage.init();}
     await storage.removeStorage("lp");
   }
 
@@ -132,5 +182,8 @@ export const useUserStore =
     clearAll,
     validationStatus, setValidationStatus,
     authAttempt, addAuthAttempt,
+    storageInitialized, setStorageInitialized,
+    refreshKey, setRefreshKey, loadRefreshKey, clearRefreshKey,
+    hasRefreshKey, refreshKeyExpiration
   };
 });
