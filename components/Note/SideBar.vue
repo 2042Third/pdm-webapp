@@ -23,6 +23,22 @@
             <UButton label="New Note" color="white"
                      :disabled="user.isLoggedIn === false"
             />
+            <UDropdown :items="sortingItems">
+              <UButton>
+                <IconsSortingUp v-if="notes.sortingOrderDesc" />
+                <IconsSortingDown v-else />
+              </UButton>
+
+              <template #item="{ item }">
+                <div :class="sortingItemSelectClass(item.value)">
+                  <span class="truncate">{{ item.label }}</span>
+
+                  <IconsSortingUp v-if="item.value === notes.sortingBy && notes.sortingOrderDesc" />
+                  <IconsSortingDown v-else-if="item.value === notes.sortingBy && !notes.sortingOrderDesc" />
+                </div>
+              </template>
+            </UDropdown>
+
           </UButtonGroup>
         </div>
         <ul class="space-y-2 font-medium mt-4">
@@ -66,6 +82,24 @@ const noteEditor = useNoteEditorStore();
 const { performGetNotes } = useNotesAction();
 const { unixToHumanReadableTime } = useUtil();
 
+const sortingItems = [
+  [{ label: 'Sort by Updated At', value: 'updated', click: () => onSortingClick("updated")}],
+  [{ label: 'Sort by Created At', value: 'created', click: () => onSortingClick("created")}],
+  [{ label: 'Sort by Title', value: 'title', click: () => onSortingClick("title")}],
+  [{ label: 'Sort by Note Id', value: 'noteid', click: () => onSortingClick('noteid') }],
+];
+
+function onSortingClick(itm) {
+  console.log("[NoteSideBar] Sorting by clicked:", itm);
+  if (itm !== notes.sortingBy) {
+    console.log(`[NotesSideBar] Setting sorting by from "${notes.sortingBy}" to "${itm}"`);
+    notes.setSortingBy(itm);
+  } else {
+    console.log(`[NotesSideBar] Toggling sorting order for "${itm}" to ${!notes.sortingOrderDesc}`);
+    notes.toggleSortingOrder();
+  }
+}
+
 const toggleMenu = () => {
   isOpen.value = !isOpen.value;
 }
@@ -98,6 +132,15 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', checkScreenSize)
 })
+
+const sortingItemSelectClass = computed(() => (itm) => {
+  const selectedClasses = "bg-gray-100 dark:bg-gray-700";
+  const normal = "flex flex-row items-center gap-4 p-2 text-gray-900 rounded-lg dark:text-white group";
+  return {
+    [normal]: true,
+    [selectedClasses]: notes.sortingBy === itm
+  };
+});
 
 </script>
 

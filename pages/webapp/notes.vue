@@ -10,6 +10,7 @@
             placeholder="Note"
             color="white"
             textareaClass="h-full"
+            @change="changed"
         />
       </CommonContainerDotted>
 
@@ -42,6 +43,18 @@ noteEditor.$subscribe((mutation, state) => {
 
 function getNotes() {
   performGetNotes(api.get_notes_url);
+}
+
+function saveNote() {
+  noteEditor.setOpenNote({
+    note: note.value,
+    title: title.value,
+    noteid: noteid.value
+  });
+}
+
+function changed(){
+  return;
 }
 
 onMounted(() => {
