@@ -5,9 +5,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   if (import.meta.client) {
     const user = useUserStore();
-    const { performGetUserData } = useAuthAction();
+    const { performGetUserData, performRefreshSessionKey } = useAuthAction();
     const { createSecureContext } = useSecurity();
-    const {get_user_url} = useApiStore();
+    const api = useApiStore();
     const userConfig = useUserConfigStore();
     const appStates = appStatesStore();
     appStates.setOnPage(to.path);
@@ -22,14 +22,20 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         console.log("[Auth Middleware] user refresh key loaded: \""+user.refreshKey+"\"");
         if (!user.sessionKey || user.sessionKey === "" || user.sessionKey.length < 1 ) {
           console.log("[Auth Middleware] user session key not found, continue.");
-          await user.clearAll();
-          user.addAuthAttempt();
-          return;
+          if (user.hasRefreshKey) {
+            await performRefreshSessionKey(api.get_refresh_url);
+            console.log("[Auth Middleware] user session key not found, refreshing.");
+          }
+          else {
+            await user.clearAll();
+            user.addAuthAttempt();
+            return;
+          }
           // return navigateTo('/login'); // Adjust the route as needed
         }
 
         console.log("[Auth Middleware] user session key found, trying to get user profile.");
-        const out = await performGetUserData(get_user_url);
+        const out = await performGetUserData(api.get_user_url);
         user.addAuthAttempt();
         if (out) {
           console.log("[Auth Middleware] user data retrieved: \"" + user.userData + "\"");
@@ -47,18 +53,23 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
             // TODO: Ask to login again.
             // return navigateTo('/login');
           }
-        } else {
+        }
+        else if (user.hasRefreshKey) {
+            await performRefreshSessionKey(api.get_refresh_url);
+            console.log("[Auth Middleware] user session key not valid, refreshing.");
+          }
+        }
+        else {
           console.log("[Auth Middleware] user data not retrieved, removing all data");
           await user.clearAll();
           // return navigateTo('/login');
         }
-      }
+
     } catch (error) {
       console.error("[Auth Middleware] error: ", error);
       await user.clearAll();
       user.addAuthAttempt();
       // return navigateTo('/login');
     }
-
   }
 });

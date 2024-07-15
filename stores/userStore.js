@@ -168,7 +168,7 @@ export const useUserStore =
     sessionKey.value = "";
     sessionKeyExpiration.value = 0;
     await clearSessionKey();
-    await clearLocalPassword ();
+    // await clearLocalPassword ();
     // await clearRefreshKey();
   }
 
