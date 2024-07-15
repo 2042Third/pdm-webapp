@@ -13,6 +13,7 @@ export const useApiStore =
     const api_signup = "/signup";
     const api_notes = "/api/notes";
     const api_get_user = "/api/user";
+    const api_refresh = "/refresh";
     const ws_test = "/ws";
     const sse_send_notification = "/sse-stream/send-notification";
     const sse_notifications = "/sse-stream/notification";
@@ -28,6 +29,8 @@ export const useApiStore =
     const get_sse_notifications_url = computed(() => (config.public.isProd ? api_production : api_base) + sse_notifications)
     const get_csrf_url = computed(() => (config.public.isProd ? api_production : api_base) + csrf_)
     const get_validation_url = computed(() => (config.public.isProd ? api_production : api_base) + api_get_user+validation)
+    const get_refresh_url = computed(() => (config.public.isProd ? api_production : api_base) + api_refresh)
+
 
     return {
       signin_url,
@@ -39,5 +42,6 @@ export const useApiStore =
       get_sse_notifications_url,
       get_csrf_url,
       get_validation_url,
+      get_refresh_url,
     };
   });

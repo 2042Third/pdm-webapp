@@ -252,6 +252,40 @@ export const useAuthAction = () => {
 
   }
 
+  const performRefreshSessionKey = async (url) => {
+    try {
+      if (!user.refreshKey) {
+        console.error('No refresh key found');
+        return false;
+      }
+      const response = await $fetch(url, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Session-Key": user.sessionKey,
+        },
+        body: {
+          "refreshKey": user.refreshKey
+        }
+      });
+
+      console.log('Refresh Session Key:', response);
+
+      if (response && response.sessionKey) {
+        await user.setSessionKey(response);
+        return true;
+      } else {
+        console.error('Refresh Session Key call failed');
+        return false;
+      }
+    } catch (error) {
+      console.error('Refresh Session Key call returned error: ', error.response ? error.response._data : error.message);
+      // Handle error (e.g., show error message
+      return false;
+    }
+
+
+  }
 
   return {
     performLogin,
@@ -262,6 +296,7 @@ export const useAuthAction = () => {
     performCSRFGet,
     performValidation,
     performValidateRefreshKey,
+    performRefreshSessionKey,
   }
 
 }

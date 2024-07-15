@@ -132,6 +132,19 @@
         >
           Validate Refresh Key
         </UButton>
+
+
+        <UButton
+            @click="refreshSessionKey()"
+            class="w-full h-full text-white place-content-center
+                 basis-1/5 bg-blue-700 hover:bg-blue-800
+                 focus:ring-4 focus:outline-none focus:ring-blue-300
+                 font-medium rounded-lg text-sm
+                 px-5 py-2.5 text-center dark:bg-blue-600
+                 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Refresh Session Key
+        </UButton>
       </CommonContainerDotted>
       <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
         <client-only>
@@ -174,7 +187,7 @@ const api = useApiStore();
 const notes = useNotesStore();
 const userConfig = useUserConfigStore();
 const { performLogin, performLoginWithRefresh, performValidateRefreshKey,
-  performLogout, performValidation } = useAuthAction();
+  performLogout, performValidation, performRefreshSessionKey } = useAuthAction();
 const { performGetNotes } = useNotesAction();
 const { unixToHumanReadableTime } = useUtil();
 
@@ -254,6 +267,10 @@ async function getValidation () {
 
 async function getValidationRefreshKey () {
   await performValidateRefreshKey(api.get_validation_url);
+}
+
+async function refreshSessionKey () {
+  await performRefreshSessionKey(api.get_refresh_url);
 }
 
 function decrypt (input) {
