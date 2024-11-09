@@ -60,7 +60,7 @@ const isConnected = ref(false)
 const debugInfo = reactive({
   lastAttempt: null,
   error: null,
-  wsUrl: 'ws://10.0.0.189/ws', // Ensure this matches your WebSocket server endpoint
+  wsUrl: 'ws://10.0.0.44/ws', // Ensure this matches your WebSocket server endpoint
 })
 
 let websocket

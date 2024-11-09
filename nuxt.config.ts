@@ -6,7 +6,7 @@ export default defineNuxtConfig({
       'process.env.DEBUG': 'true',
     },
   },
-  compatibilityDate: '2024-11-08',
+  // compatibilityDate: '2024-11-08',
   ssr: true,
   devServer: {
     host: '0.0.0.0',
@@ -18,8 +18,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       salt: process.env.NUXT_SALT,
-      apiBase: process.env.API_BASE || 'http://10.0.0.189/api',
-      wsBase: process.env.WS_BASE || 'ws://10.0.0.189',
+      apiBase: process.env.API_BASE || 'http://10.0.0.44/api',
+      wsBase: process.env.WS_BASE || 'ws://10.0.0.44',
       apiProduction: process.env.API_PRODUCTION || 'https://pdm.pw',
       wsProduction: process.env.WS_PRODUCTION || 'wss://pdm.pw',
       isProd: process.env.NODE_ENV === 'production',
@@ -39,7 +39,8 @@ export default defineNuxtConfig({
     },
   },
   plugins: [
-    {src:'~/plugins/wasm', mode: 'client'},
+    // {src:'~/plugins/wasm', mode: 'client'},
+    {src:'~/plugins/wasm'},
   ],
   postcss: {
     plugins: {
