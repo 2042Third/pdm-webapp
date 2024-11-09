@@ -3,7 +3,8 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const notesUrl = process.dev ? '/wasm/notes.cjs' : '/wasm/notes.cjs';
 
   try {
-    const { default: createWasmModule } = await import('~/assets/encryption/wasm/notes.cjs');
+    // const { default: createWasmModule } = await import('~/assets/encryption/wasm/notes.cjs');
+    const { default: createWasmModule } = await import(notesUrl);
 
     if (typeof createWasmModule !== 'function') {
       console.error('createWasmModule is not a function:', createWasmModule);

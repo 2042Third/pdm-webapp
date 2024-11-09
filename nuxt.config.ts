@@ -6,6 +6,7 @@ export default defineNuxtConfig({
       'process.env.DEBUG': 'true',
     },
   },
+  compatibilityDate: '2024-11-08',
   ssr: true,
   devServer: {
     host: '0.0.0.0',
