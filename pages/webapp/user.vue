@@ -258,7 +258,7 @@ async function getUserData(){
 
 async function getUserDataPOST(){
   userDataStatus.value = await performGetUserDataPOST(api.get_user_url);
-  console.log("[User page] UserDataPOST" + user.userData);
+  console.log("[User page] UserDataPOST " + user.userData);
 }
 
 async function getValidation () {
