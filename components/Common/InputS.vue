@@ -3,7 +3,7 @@
     <UInput
         :id="id"
         :value="modelValue"
-        @input="$emit('update:modelValue', $event.target.value)"
+        @input="updateValue"
         @keydown="handleKeyDown"
         :placeholder="placeholder"
         :type="type"
@@ -53,11 +53,13 @@ export default {
     },
     onClear: {
       type: Function,
-      default: () => {},
+      default: () => {
+      },
     },
     onEnter: {
       type: Function,
-      default: () => {},
+      default: () => {
+      },
     },
   },
   emits: ['update:modelValue'],
@@ -67,6 +69,9 @@ export default {
     };
   },
   methods: {
+    updateValue(event) {
+      this.$emit('update:modelValue', event.target.value);
+    },
     handleKeyDown(event) {
       if (event.key === 'Enter') {
         const now = Date.now();

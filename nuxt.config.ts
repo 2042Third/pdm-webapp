@@ -2,13 +2,23 @@
 import {resolve} from "path";
 export default defineNuxtConfig({
   vite: {
+    devtools: false,
     define: {
       'process.env.DEBUG': 'false',
       // 'process.env.DEBUG': 'true',
     },
+    plugins: [
+      {
+        name: 'wasm-fix',
+        enforce: 'pre',
+        transform(code, id) {
+          if (id.endsWith('.wasm')) {
+            return `export default "${id}";`;
+          }
+        }
+      }
+    ]
   },
-  devtools: false,
-  compatibilityDate: '2024-11-08',
   ssr: true,
 
   devServer: {
@@ -40,7 +50,7 @@ export default defineNuxtConfig({
   ],
 
   devtools: {
-    enabled: true,
+    enabled: false,
 
     timeline: {
       enabled: true,
@@ -78,16 +88,30 @@ export default defineNuxtConfig({
     storage: 'localStorage'
   },
 
+  // hooks: {
+  //   'build:compiled': async (generator) => {
+  //     const fs = require('fs').promises;
+  //     const path = require('path');
+  //
+  //     const sourceFile = path.join(generator.nuxt.options.buildDir, 'public/wasm/notes.wasm');
+  //     const destinationFile = path.join(generator.nuxt.options.buildDir, 'server/notes.wasm');
+  //
+  //     await fs.copyFile(sourceFile, destinationFile);
+  //     console.log('Copied notes.wasm to server directory');
+  //   },
+  // },
   hooks: {
     'build:compiled': async (generator) => {
-      const fs = require('fs').promises;
-      const path = require('path');
+      if (process.env.NODE_ENV === 'production') {
+        const fs = require('fs').promises;
+        const path = require('path');
 
-      const sourceFile = path.join(generator.nuxt.options.buildDir, 'public/wasm/notes.wasm');
-      const destinationFile = path.join(generator.nuxt.options.buildDir, 'server/notes.wasm');
+        const sourceFile = path.join(generator.nuxt.options.buildDir, 'public/wasm/notes.wasm');
+        const destinationFile = path.join(generator.nuxt.options.buildDir, 'server/notes.wasm');
 
-      await fs.copyFile(sourceFile, destinationFile);
-      console.log('Copied notes.wasm to server directory');
+        await fs.copyFile(sourceFile, destinationFile);
+        console.log('Copied notes.wasm to server directory');
+      }
     },
   },
 
