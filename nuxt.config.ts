@@ -3,33 +3,42 @@ import {resolve} from "path";
 export default defineNuxtConfig({
   vite: {
     define: {
+      // 'process.env.DEBUG': 'false',
       'process.env.DEBUG': 'true',
     },
   },
+  devtools: false,
+  compatibilityDate: '2024-11-08',
   ssr: true,
+
   devServer: {
     host: '0.0.0.0',
     port: 3000
   },
+
   router: {
     base: '/webapp/'
   },
+
   runtimeConfig: {
     public: {
       salt: process.env.NUXT_SALT,
-      apiBase: process.env.API_BASE || 'http://10.0.0.189/api',
-      wsBase: process.env.WS_BASE || 'ws://10.0.0.189',
+      apiBase: process.env.API_BASE || 'http://10.0.0.44/api',
+      wsBase: process.env.WS_BASE || 'ws://10.0.0.44',
       apiProduction: process.env.API_PRODUCTION || 'https://pdm.pw',
       wsProduction: process.env.WS_PRODUCTION || 'wss://pdm.pw',
       isProd: process.env.NODE_ENV === 'production',
     }
   },
+
   alias: {
     "@": resolve(__dirname, "/"),
   },
+
   css:[
     '~/assets/main.scss',
   ],
+
   devtools: {
     enabled: true,
 
@@ -37,18 +46,23 @@ export default defineNuxtConfig({
       enabled: true,
     },
   },
+
   plugins: [
     {src:'~/plugins/wasm', mode: 'client'},
+    // {src:'~/plugins/wasm'},
   ],
+
   postcss: {
     plugins: {
       tailwindcss: {},
       autoprefixer: {},
     },
   },
+
   app: {
     pageTransition: { name: 'page', mode: 'out-in' }
   },
+
   modules: [
     '@pinia/nuxt',
     "@nuxt/ui",
@@ -56,12 +70,14 @@ export default defineNuxtConfig({
     '@pinia-plugin-persistedstate/nuxt',
     '@formkit/auto-animate/nuxt',
   ],
+
   piniaPersistedstate: {
     cookieOptions: {
       sameSite: 'strict',
     },
     storage: 'localStorage'
   },
+
   hooks: {
     'build:compiled': async (generator) => {
       const fs = require('fs').promises;
@@ -74,4 +90,6 @@ export default defineNuxtConfig({
       console.log('Copied notes.wasm to server directory');
     },
   },
+
+  compatibilityDate: '2024-11-09',
 })
