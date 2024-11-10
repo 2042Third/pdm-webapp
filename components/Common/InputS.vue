@@ -2,8 +2,7 @@
   <div class="relative">
     <UInput
         :id="id"
-        :value="modelValue"
-        @input="updateValue"
+        v-model="inputValue"
         @keydown="handleKeyDown"
         :placeholder="placeholder"
         :type="type"
@@ -12,18 +11,18 @@
         :ui="{ icon: { trailing: { pointer: '' } } }"
         class="input-wrapper"
     >
-      <template v-if="modelValue" #trailing>
-        <UButton
-            color="gray"
-            variant="link"
-            :padded="false"
-            @click="onClear"
-            class="clear-button"
-            tabindex="-1"
-        >
-          <IconsClose/>
-        </UButton>
-      </template>
+    <template v-if="inputValue" #trailing>
+      <UButton
+          color="gray"
+          variant="link"
+          :padded="false"
+          @click="onClear"
+          class="clear-button"
+          tabindex="-1"
+      >
+        <IconsClose/>
+      </UButton>
+    </template>
     </UInput>
   </div>
 </template>
@@ -53,25 +52,29 @@ export default {
     },
     onClear: {
       type: Function,
-      default: () => {
-      },
+      default: () => {},
     },
     onEnter: {
       type: Function,
-      default: () => {
-      },
+      default: () => {},
     },
   },
   emits: ['update:modelValue'],
   data() {
     return {
+      inputValue: this.modelValue,  // Initialize inputValue
       lastEnterPress: 0,
     };
   },
-  methods: {
-    updateValue(event) {
-      this.$emit('update:modelValue', event.target.value);
+  watch: {
+    modelValue(newVal) {
+      this.inputValue = newVal;
     },
+    inputValue(newVal) {
+      this.$emit('update:modelValue', newVal);
+    },
+  },
+  methods: {
     handleKeyDown(event) {
       if (event.key === 'Enter') {
         const now = Date.now();
@@ -80,6 +83,10 @@ export default {
           this.lastEnterPress = now;
         }
       }
+    },
+    onClear() {
+      this.inputValue = '';  // Clear input field
+      this.onClear();
     },
   },
 };

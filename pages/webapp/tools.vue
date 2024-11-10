@@ -16,6 +16,7 @@
                 type="text"
                 class="w-full h-full "
                 :on-clear="() => inputText = ''"
+                :on-enter="calculateHash"
             />
           </template>
           <template #right>
