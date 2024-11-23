@@ -7,7 +7,6 @@
             type="text"
             class="w-full h-full"
             :class="{ 'border-red-500': showError }"
-            :on-clear="() => input_email = ''"
             :on-enter="login"
             placeholder="Email"
         />
@@ -18,7 +17,6 @@
             type="password"
             class="w-full h-full"
             :class="{ 'border-red-500': showError }"
-            :on-clear="() => input_password = ''"
             :on-enter="login"
             placeholder="Password"
         />

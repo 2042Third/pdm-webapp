@@ -55,15 +55,15 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
           }
         }
         else if (user.hasRefreshKey) {
-            await performRefreshSessionKey(api.get_refresh_url);
-            console.log("[Auth Middleware] user session key not valid, refreshing.");
-          }
+          await performRefreshSessionKey(api.get_refresh_url);
+          console.log("[Auth Middleware] user session key not valid, refreshing.");
         }
-        else {
-          console.log("[Auth Middleware] user data not retrieved, removing all data");
-          await user.clearAll();
-          // return navigateTo('/login');
-        }
+      }
+      else {
+        console.log("[Auth Middleware] user data not retrieved, removing all data");
+        await user.clearAll();
+        // return navigateTo('/login');
+      }
 
     } catch (error) {
       console.error("[Auth Middleware] error: ", error);

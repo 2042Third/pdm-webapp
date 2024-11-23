@@ -15,7 +15,6 @@
                 placeholder="Enter text"
                 type="text"
                 class="w-full h-full "
-                :on-clear="() => inputText = ''"
                 :on-enter="calculateHash"
             />
           </template>
@@ -48,7 +47,6 @@
       </label>
       <CommonInputS id="enc-pass" v-model="encPass" placeholder="1234"
                     type="text" class="h-9"
-                    :on-clear="() => encPass = ''"
       />
       <label for="enc-plain" class="block text-sm font-medium text-gray-900 dark:text-white">
         Plaintext
@@ -57,7 +55,6 @@
         <template #left>
           <CommonInputS id="enc-plain" v-model="encPlain" placeholder="Enter text"
                         type="text" class="w-full h-full"
-                        :on-clear="() => encPlain = ''"
           />
         </template>
         <template #right>
@@ -84,7 +81,6 @@
       </label>
       <CommonInputS id="dec-pass" v-model="decPass" placeholder="1234"
                     type="text" class="h-9"
-                    :on-clear="() => decPass = ''"
       />
       <label for="dec-cipher" class="block text-sm font-medium text-gray-900 dark:text-white">
         Ciphertext
@@ -93,7 +89,6 @@
         <template #left>
           <CommonInputS id="dec-cipher" v-model="decCipher" placeholder="Enter text"
                         type="text" class="w-full h-full"
-                        :on-clear="() => decCipher = ''"
           />
         </template>
         <template #right>
@@ -119,7 +114,6 @@
         <template #left>
           <CommonInputS id="context-pass" v-model="contextPass" placeholder="1234"
                         type="text" class="w-full h-full"
-                        :on-clear="() => contextPass = ''"
           />
         </template>
         <template #right>
@@ -144,7 +138,6 @@
         <template #left>
           <CommonInputS id="context-plain" v-model="contextPlain" placeholder="Enter text"
                         type="text" class="w-full h-full"
-                        :on-clear="() => contextPlain = ''"
           />
         </template>
         <template #right>
@@ -167,7 +160,6 @@
         <template #left>
           <CommonInputS id="context-decrypt" v-model="contextCipher" placeholder="Enter text"
                         type="text" class="w-full h-full"
-                        :on-clear="() => contextCipher = ''"
           />
         </template>
         <template #right>

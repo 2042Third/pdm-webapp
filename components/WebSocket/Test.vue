@@ -20,7 +20,7 @@
     </div>
     <div class="mb-4">
       <h2 class="text-xl font-semibold mb-2">Received Messages:</h2>
-      <ul class="border p-2 h-60 overflow-y-auto">
+      <ul class="border p-2 h-60 overflow-y-auto" ref="messageList">
         <li v-for="(msg, index) in receivedMessages" :key="index" class="mb-1">
           {{ msg }}
         </li>
@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, nextTick } from 'vue'
 
 const message = ref('')
 const receivedMessages = ref([])
@@ -64,6 +64,9 @@ const debugInfo = reactive({
 })
 
 let websocket
+
+// Reference to the message list element
+const messageList = ref(null)
 
 const connect = () => {
   debugInfo.lastAttempt = new Date().toISOString()
@@ -81,6 +84,7 @@ const connect = () => {
     if (receivedMessage !== "Heartbeat") {
       console.log('Received message:', receivedMessage)
       receivedMessages.value.push(receivedMessage)
+      scrollToBottom() // Call scroll when a new message arrives
     } else {
       console.log('Heartbeat received')
     }
@@ -115,6 +119,15 @@ const sendMessage = () => {
   }
 }
 
+const scrollToBottom = () => {
+  nextTick(() => {
+    // Ensure the scroll is at the bottom of the message list after the DOM update
+    if (messageList.value) {
+      messageList.value.scrollTop = messageList.value.scrollHeight
+    }
+  })
+}
+
 onMounted(() => {
   status.value = 'Disconnected'
 })
@@ -123,3 +136,4 @@ onUnmounted(() => {
   disconnect()
 })
 </script>
+

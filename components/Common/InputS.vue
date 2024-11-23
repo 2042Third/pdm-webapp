@@ -16,7 +16,7 @@
           color="gray"
           variant="link"
           :padded="false"
-          @click="onClear"
+          @click="clearInput"
           class="clear-button"
           tabindex="-1"
       >
@@ -84,7 +84,7 @@ export default {
         }
       }
     },
-    onClear() {
+    clearInput() {
       this.inputValue = '';  // Clear input field
       this.onClear();
     },
