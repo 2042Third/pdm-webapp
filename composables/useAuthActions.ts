@@ -287,6 +287,30 @@ export const useAuthAction = () => {
 
   }
 
+  async function performCallProtected () {
+    try {
+      const response = await $fetch('/protected', {
+        method: 'GET',
+        headers: {
+          "Authorization": "Bearer " + user.sessionKey,
+        }
+      });
+
+      console.log('Protected call response:', response);
+
+      if (response) {
+        return true;
+      } else {
+        console.error('Protected call failed');
+        return false;
+      }
+    } catch (error) {
+      console.error('Protected call returned error: ', error.response ? error.response._data : error.message);
+      // Handle error (e.g., show error message
+      return false;
+    }
+  }
+
   return {
     performLogin,
     performLoginWithRefresh,
@@ -297,6 +321,7 @@ export const useAuthAction = () => {
     performValidation,
     performValidateRefreshKey,
     performRefreshSessionKey,
+    performCallProtected,
   }
 
 }

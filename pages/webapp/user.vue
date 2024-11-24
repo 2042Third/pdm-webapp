@@ -143,6 +143,18 @@
         >
           Refresh Session Key
         </UButton>
+
+        <UButton
+            @click="callProtected()"
+            class="w-full h-full text-white place-content-center
+                 basis-1/5 bg-blue-700 hover:bg-blue-800
+                 focus:ring-4 focus:outline-none focus:ring-blue-300
+                 font-medium rounded-lg text-sm
+                 px-5 py-2.5 text-center dark:bg-blue-600
+                 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Call Protected
+        </UButton>
       </CommonContainerDotted>
       <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
         <client-only>
@@ -185,7 +197,9 @@ const api = useApiStore();
 const notes = useNotesStore();
 const userConfig = useUserConfigStore();
 const { performLogin, performLoginWithRefresh, performValidateRefreshKey,
-  performLogout, performValidation, performRefreshSessionKey } = useAuthAction();
+  performLogout, performValidation, performRefreshSessionKey,
+  performCallProtected
+} = useAuthAction();
 const { performGetNotes } = useNotesAction();
 const { unixToHumanReadableTime } = useUtil();
 
@@ -269,6 +283,10 @@ async function getValidationRefreshKey () {
 
 async function refreshSessionKey () {
   await performRefreshSessionKey(api.get_refresh_url);
+}
+
+async function callProtected () {
+  await performCallProtected();
 }
 
 function decrypt (input) {
