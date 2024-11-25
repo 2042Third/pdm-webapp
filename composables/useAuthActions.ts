@@ -79,7 +79,7 @@ export const useAuthAction = () => {
       const response = await $fetch(url, {
         method: 'GET',
         headers: {
-          "Session-Key": user.sessionKey,
+          "Authorization": "Bearer " + user.sessionKey,
         }
       });
 
@@ -104,7 +104,7 @@ export const useAuthAction = () => {
       const response = await $fetch(url, {
         method: 'GET',
         headers: {
-          "Session-Key": user.sessionKey,
+          "Authorization": "Bearer " + user.sessionKey,
         }
       });
 
@@ -130,7 +130,7 @@ export const useAuthAction = () => {
       const response = await $fetch(url, {
         method: 'POST',
         headers: {
-          "Session-Key": user.sessionKey,
+          "Authorization": "Bearer " + user.sessionKey,
         }
       });
 
@@ -157,7 +157,7 @@ export const useAuthAction = () => {
       const response = await $fetch(url, {
         method: 'GET',
         headers: {
-          "Session-Key": user.sessionKey,
+          "Authorization": "Bearer " + user.sessionKey,
         }
       });
 
@@ -192,7 +192,7 @@ export const useAuthAction = () => {
       const response = await $fetch(url, {
         method: 'GET',
         headers: {
-          "Session-Key": user.sessionKey,
+          "Authorization": "Bearer " + user.sessionKey,
         }
       });
 
@@ -225,7 +225,7 @@ export const useAuthAction = () => {
         method: 'POST',
         headers: {
           "Content-Type": "application/json",
-          "Session-Key": user.sessionKey,
+          "Authorization": "Bearer " + user.sessionKey,
         },
         body: {
           "refreshKey": user.refreshKey
@@ -262,7 +262,7 @@ export const useAuthAction = () => {
         method: 'POST',
         headers: {
           "Content-Type": "application/json",
-          "Session-Key": user.sessionKey,
+          "Authorization": "Bearer " + user.sessionKey,
         },
         body: {
           "refreshKey": user.refreshKey

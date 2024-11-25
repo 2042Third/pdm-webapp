@@ -6,7 +6,7 @@ export function useApi() {
 
   const api = $fetch.create({
     headers: {
-      'Session-Key': sessionKey || '',
+      "Authorization": "Bearer " + sessionKey || '',
       'X-XSRF-TOKEN': $csrf() || '',
     },
     credentials: 'include',  // This ensures cookies are sent with the request

@@ -116,7 +116,7 @@ const connect = async () => {
     eventSource = new CustomEventSource(apiStore.get_sse_notifications_url, {
       withCredentials: true,
       headers: {
-        'Session-Key': sessionKey
+        "Authorization": "Bearer " + sessionKey
       }
     });
 

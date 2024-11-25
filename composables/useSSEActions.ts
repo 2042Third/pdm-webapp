@@ -8,7 +8,7 @@ export const useSSEActions = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Session-Key': sessionKey,
+          "Authorization": "Bearer " + sessionKey,
         },
         body: JSON.stringify({ message: 'Test notification' }),
       })

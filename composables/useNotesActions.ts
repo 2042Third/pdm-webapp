@@ -10,7 +10,7 @@ export const useNotesAction = () => {
       const response = await $fetch(url, {
         method: 'GET',
         headers: {
-          "Session-Key": user.sessionKey,
+          "Authorization": "Bearer " + user.sessionKey,
         }
       });
       console.log('Get Notes response:', response);
@@ -41,7 +41,7 @@ export const useNotesAction = () => {
       const response = await $fetch(url, {
         method: 'GET',
         headers: {
-          "Session-Key": user.sessionKey,
+          "Authorization": "Bearer " + user.sessionKey,
         }
       });
       console.log('Get Notes response:', response);
