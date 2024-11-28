@@ -61,7 +61,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       }
       else {
         console.log("[Auth Middleware] user data not retrieved, removing all data");
-        await user.clearAll();
+        // await user.clearAll();
         // return navigateTo('/login');
       }
 
