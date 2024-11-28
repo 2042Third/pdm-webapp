@@ -2,6 +2,11 @@
   <div class="p-4">
     <h1 class="text-2xl font-bold mb-4">WebSocket Test</h1>
     <div class="mb-4">
+
+        <CommonInputS id="user-id" v-model="userId" placeholder="User ID"
+                      type="text" class="w-full h-full"
+        />
+
       <label for="message" class="block mb-2">Message:</label>
       <input
           id="message"
@@ -52,7 +57,9 @@
 
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, nextTick } from 'vue'
-
+import {useApiStore} from "~/stores/apiStore.js"; useApiStore()
+const {get_ws_test_url} = useApiStore()
+const userId = ref('')
 const message = ref('')
 const receivedMessages = ref([])
 const status = ref('Disconnected')
@@ -60,7 +67,7 @@ const isConnected = ref(false)
 const debugInfo = reactive({
   lastAttempt: null,
   error: null,
-  wsUrl: 'ws://10.0.0.44/ws', // Ensure this matches your WebSocket server endpoint
+  wsUrl: 'ws://10.0.0.44/ws', // Base WebSocket server endpoint
 })
 
 let websocket
@@ -70,7 +77,8 @@ const messageList = ref(null)
 
 const connect = () => {
   debugInfo.lastAttempt = new Date().toISOString()
-  websocket = new WebSocket(debugInfo.wsUrl)
+  const wsUrlWithUserId = `${get_ws_test_url}?userId=${encodeURIComponent(userId.value)}`
+  websocket = new WebSocket(wsUrlWithUserId)
 
   websocket.onopen = () => {
     status.value = 'Connected'
@@ -136,4 +144,3 @@ onUnmounted(() => {
   disconnect()
 })
 </script>
-
