@@ -37,8 +37,8 @@ export default defineNuxtConfig({
       salt: process.env.NUXT_SALT,
       apiBase: process.env.API_BASE || 'http://10.0.0.44/api',
       wsBase: process.env.WS_BASE || 'ws://10.0.0.44',
-      apiProduction: process.env.API_PRODUCTION || 'https://pdm.pw',
-      wsProduction: process.env.WS_PRODUCTION || 'wss://pdm.pw',
+      apiProduction: process.env.API_PRODUCTION || 'https://yangyi.dev',
+      wsProduction: process.env.WS_PRODUCTION || 'wss://yangyi.dev',
       isProd: process.env.NODE_ENV === 'production',
     }
   },

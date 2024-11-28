@@ -5,8 +5,8 @@ export const useApiStore =
     const config = useRuntimeConfig();
     const api_base = "http://10.0.0.44";
     const ws_base = "ws://10.0.0.44";
-    const api_production = "http://97.107.133.143";
-    const ws_production = "ws://97.107.133.143";
+    const api_production = "https://yangyi.dev";
+    const ws_production = "wss://yangyi.dev";
 
     const api_signin = "/login";
     const api_signout = "/api/user/logout";
