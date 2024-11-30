@@ -24,7 +24,7 @@ export default defineNuxtConfig({
   ssr: true,
 
   devServer: {
-    host: '0.0.0.0',
+    host: '127.0.0.1',
     port: 3000
   },
 
@@ -35,8 +35,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       salt: process.env.NUXT_SALT,
-      apiBase: process.env.API_BASE || 'http://10.0.0.44/api',
-      wsBase: process.env.WS_BASE || 'ws://10.0.0.44',
+      apiBase: process.env.API_BASE || 'http://127.0.0.1/api',
+      wsBase: process.env.WS_BASE || 'ws://127.0.0.1',
       apiProduction: process.env.API_PRODUCTION || 'https://yangyi.dev',
       wsProduction: process.env.WS_PRODUCTION || 'wss://yangyi.dev',
       isProd: process.env.NODE_ENV === 'production',

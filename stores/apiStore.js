@@ -3,8 +3,8 @@ import { useRuntimeConfig } from 'nuxt/app';
 export const useApiStore =
   defineStore('api', () => {
     const config = useRuntimeConfig();
-    const api_base = "http://10.0.0.44";
-    const ws_base = "ws://10.0.0.44";
+    const api_base = "http://127.0.0.1";
+    const ws_base = "ws://127.0.0.1";
     const api_production = "https://yangyi.dev";
     const ws_production = "wss://yangyi.dev";
 
