@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
             innerClass="h-full"
         >
           <UTextarea
-              v-model="note"
+              v-model="noteEditor.note"
               ref="textareaRef"
               class="w-full h-full text-md"
               placeholder="Note"
