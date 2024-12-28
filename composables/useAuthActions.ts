@@ -53,7 +53,7 @@ export const useAuthAction = () => {
         }
       });
 
-      console.log('Login with Refresh response:', response);
+      console.log('Login with Refresh response: ', response);
 
       if (response && response.sessionKey) {
         await user.setSessionKey(response);

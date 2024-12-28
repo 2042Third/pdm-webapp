@@ -1,7 +1,8 @@
 <template>
     <div class="flex flex-col  gap-6 mb-6 justify-center items-center ">
-      <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
+      <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4"><client-only>
         <CommonInputS
+            v-if="!user.isLoggedIn"
             id="user-email"
             v-model="input_email"
             type="text"
@@ -12,6 +13,7 @@
         />
 
         <CommonInputS
+            v-if="!user.isLoggedIn"
             id="user-ps"
             v-model="input_password"
             type="password"
@@ -30,30 +32,34 @@
         </div>
 
         <UButton
+            v-if="!user.isLoggedIn"
             @click="login()"
             :loading="isLoading"
             :disabled="isLoading"
             class="w-full h-full text-white place-content-center
-               basis-1/5 bg-blue-700 hover:bg-blue-800
-               focus:ring-4 focus:outline-none focus:ring-blue-300
-               font-medium rounded-lg text-sm
-               px-5 py-2.5 text-center dark:bg-blue-600
-               dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                 basis-1/5 bg-blue-700 hover:bg-blue-800
+                 focus:ring-4 focus:outline-none focus:ring-blue-300
+                 font-medium rounded-lg text-sm
+                 px-5 py-2.5 text-center dark:bg-blue-600
+                 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             :class="{ 'shake-animation': showError }"
         >
           {{ isLoading ? 'Logging in...' : 'Login' }}
         </UButton>
 
-        <UButton v-if="user.isLoggedIn" @click="logout()"
-                 class="w-full h-full text-white place-content-center
-                        basis-1/5 bg-blue-700 hover:bg-blue-800
-                        focus:ring-4 focus:outline-none focus:ring-blue-300
-                        font-medium rounded-lg text-sm
-                        px-5 py-2.5 text-center dark:bg-blue-600
-                        dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        <UButton
+            v-if="user.isLoggedIn"
+            @click="logout()"
+            class="w-full h-full text-white place-content-center
+                     basis-1/5 bg-blue-700 hover:bg-blue-800
+                     focus:ring-4 focus:outline-none focus:ring-blue-300
+                     font-medium rounded-lg text-sm
+                     px-5 py-2.5 text-center dark:bg-blue-600
+                     dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
           Logout
         </UButton>
-
+      </client-only>
       </CommonContainerDotted>
 
 

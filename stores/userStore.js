@@ -52,7 +52,7 @@ export const useUserStore =
     const storage = useLocalStorage();
     if (!storageInitialized){await storage.init();}
     sessionKey.value = key.sessionKey;
-    sessionKeyExpiration.value = key.expirationTime;
+    sessionKeyExpiration.value = key.expiration;
     await storage.setStorage("us", nuxtApp.$wasm.loader_check(salt(),JSON.stringify(key)));
   }
 
