@@ -137,14 +137,7 @@ const updateStatus = () => {
   }, 1000)
 }
 
-// Close on escape key
-onMounted(() => {
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && props.isOpen) {
-      emit('close')
-    }
-  })
-})
+
 </script>
 
 <template>
@@ -153,7 +146,7 @@ onMounted(() => {
       <div v-if="isOpen"
            :class="[
              'fixed p-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg border ' +
-              'border-gray-200 dark:border-gray-700 z-50 max-w-prose w-full max-h-[60vh] flex flex-col',
+              'border-gray-200 dark:border-gray-700 z-40 max-w-prose w-full max-h-[70vh] flex flex-col',
              {
                'top-4 left-4': position === 'top-left',
                'top-4 right-4': position === 'top-right',
@@ -202,7 +195,10 @@ onMounted(() => {
 
             </client-only>
           </CommonContainerDotted>
+
+
           <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
+
             <UButton
                 @click="getUserData()"
                 class="w-full h-full text-white place-content-center
@@ -288,16 +284,21 @@ onMounted(() => {
                 Get Notes
               </UButton>
 
-              <div ref="parent" v-if="notes.notesList.length" class="space-y-4">
-                <div  v-for="note in notes.notesList" :key="note.noteid" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
-                  <div class="flex justify-between items-center mb-2">
-                    <h2 class="text-lg font-semibold text-gray-800 dark:text-white">Note ID: {{ note.noteid }}</h2>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(note.time) }}</span>
+              <ToggleSection title="Notes" >
+                <div ref="parent" v-if="notes.notesList.length" class="space-y-4">
+                  <div  v-for="note in notes.notesList" :key="note.noteid" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+                    <div class="flex justify-between items-center mb-2">
+                      <h2 class="text-lg font-semibold text-gray-800 dark:text-white">Note ID: {{ note.noteid }}</h2>
+                      <span class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(note.time) }}</span>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300">{{ note.heading }}</p>
                   </div>
-                  <p class="text-gray-600 dark:text-gray-300">{{ note.heading }}</p>
                 </div>
-              </div>
-              <p v-else class="text-center text-gray-500 dark:text-gray-400">No notes available. Click 'Get Notes' to fetch your notes.</p>
+                <p v-else class="text-center text-gray-500 dark:text-gray-400">No notes available. Click 'Get Notes' to fetch your notes.</p>
+              </ToggleSection>
+
+
+
             </client-only>
           </CommonContainerDotted>
           <!-- Text Input -->
