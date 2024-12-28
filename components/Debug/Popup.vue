@@ -151,7 +151,7 @@ onMounted(() => {
       <div v-if="isOpen"
            :class="[
              'fixed p-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg border ' +
-              'border-gray-200 dark:border-gray-700 z-50 w-80 max-h-screen flex flex-col',
+              'border-gray-200 dark:border-gray-700 z-50 max-w-prose w-full max-h-[80vh] flex flex-col',
              {
                'top-4 left-4': position === 'top-left',
                'top-4 right-4': position === 'top-right',
