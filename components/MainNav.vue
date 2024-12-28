@@ -65,10 +65,22 @@
         </NuxtLink>
       </li>
     </ul>
+    <button @click="appStates.toggleShowDebug()">
+      Show Debug Panel
+    </button>
+
+    <DebugPopup
+        :is-open="appStates.showDebug"
+        position="bottom-right"
+        @close="appStates.setShowDebug(false)"
+    />
   </div>
 </template>
 
 <script setup>
+
+import {ref} from "vue";
+
 
 const route = useRoute()
 const appStates = appStatesStore()

@@ -14,14 +14,14 @@
 
 <script setup lang="ts">
     useSeoMeta({
-      title: 'My Amazing Site',
-      ogTitle: 'My Amazing Site',
-      description: 'This is my amazing site, let me tell you all about it.',
-      ogDescription: 'This is my amazing site, let me tell you all about it.',
+      title: 'PDM Notes',
+      ogTitle: 'PDM Notes',
+      description: 'End-to-end encrypted  notes app completely developed and open sourced by one person.',
+      ogDescription: 'End-to-end encrypted  notes app completely developed and open sourced by one person.',
       ogImage: 'https://example.com/image.png',
       twitterCard: 'summary_large_image',
     });
-    console.log('Hello from the homepage');
+    // console.log('Hello from the homepage');
 </script>
 
 <style>
