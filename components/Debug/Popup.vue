@@ -2,6 +2,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useNotesStore } from '~/stores/notesStore'
+import TextDisplay from "~/components/TextDisplay.vue";
 
 const [parent] = useAutoAnimate();
 
@@ -178,9 +179,9 @@ onMounted(() => {
               <text>
                 Login Status: {{user.isLoggedIn}}
               </text>
-              <text>
-                Session Key: {{user.sessionKey}}
-              </text>
+
+              <TextDisplay :content="'Session Key: '+user.sessionKey" />
+
               <text>
                 Session Key Expiration: {{unixToHumanReadableTime(user.sessionKeyExpiration)}}
               </text>

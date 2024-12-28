@@ -31,7 +31,6 @@ const copyContent = () => {
 
 <template>
   <ClientOnly>
-    <template #default >
       <div v-if="isSupported" class="flex flex-row gap-2" >
         <UTextarea
             :value="input"
@@ -72,9 +71,7 @@ const copyContent = () => {
 
           </UButton>
         </UTooltip>
-
       </p>
-    </template>
 
     <template #fallback>
       <p>Loading...</p>
