@@ -197,79 +197,84 @@ const updateStatus = () => {
           </CommonContainerDotted>
 
 
-          <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
+          <ToggleSection title="Server Calls" >
+            <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
+              <ToggleSection title="User" >
+                <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
+                  <UButton
+                    @click="getUserData()"
+                    class="w-full h-full text-white place-content-center
+                     basis-1/5 bg-blue-700 hover:bg-blue-800
+                     focus:ring-4 focus:outline-none focus:ring-blue-300
+                     font-medium rounded-lg text-sm
+                     px-5 py-2.5 text-center dark:bg-blue-600
+                     dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  >
+                    Get User Data
+                  </UButton>
 
-            <UButton
-                @click="getUserData()"
-                class="w-full h-full text-white place-content-center
-                 basis-1/5 bg-blue-700 hover:bg-blue-800
-                 focus:ring-4 focus:outline-none focus:ring-blue-300
-                 font-medium rounded-lg text-sm
-                 px-5 py-2.5 text-center dark:bg-blue-600
-                 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            >
-              Get User Data
-            </UButton>
-
-            <UButton
-                @click="getUserDataPOST()"
-                class="w-full h-full text-white place-content-center
-                 basis-1/5 bg-blue-700 hover:bg-blue-800
-                 focus:ring-4 focus:outline-none focus:ring-blue-300
-                 font-medium rounded-lg text-sm
-                 px-5 py-2.5 text-center dark:bg-blue-600
-                 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            >
-              Get User Data POST
-            </UButton>
-            <UButton
-                @click="getValidation()"
-                class="w-full h-full text-white place-content-center
-                 basis-1/5 bg-blue-700 hover:bg-blue-800
-                 focus:ring-4 focus:outline-none focus:ring-blue-300
-                 font-medium rounded-lg text-sm
-                 px-5 py-2.5 text-center dark:bg-blue-600
-                 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            >
-              Validate Session Key
-            </UButton>
-            <UButton
-                @click="getValidationRefreshKey()"
-                class="w-full h-full text-white place-content-center
-                 basis-1/5 bg-blue-700 hover:bg-blue-800
-                 focus:ring-4 focus:outline-none focus:ring-blue-300
-                 font-medium rounded-lg text-sm
-                 px-5 py-2.5 text-center dark:bg-blue-600
-                 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            >
-              Validate Refresh Key
-            </UButton>
+                  <UButton
+                      @click="getUserDataPOST()"
+                      class="w-full h-full text-white place-content-center
+                       basis-1/5 bg-blue-700 hover:bg-blue-800
+                       focus:ring-4 focus:outline-none focus:ring-blue-300
+                       font-medium rounded-lg text-sm
+                       px-5 py-2.5 text-center dark:bg-blue-600
+                       dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  >
+                    Get User Data POST
+                  </UButton>
+                </CommonContainerDotted>
+              </ToggleSection>
+              <UButton
+                  @click="getValidation()"
+                  class="w-full h-full text-white place-content-center
+                   basis-1/5 bg-blue-700 hover:bg-blue-800
+                   focus:ring-4 focus:outline-none focus:ring-blue-300
+                   font-medium rounded-lg text-sm
+                   px-5 py-2.5 text-center dark:bg-blue-600
+                   dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                Validate Session Key
+              </UButton>
+              <UButton
+                  @click="getValidationRefreshKey()"
+                  class="w-full h-full text-white place-content-center
+                   basis-1/5 bg-blue-700 hover:bg-blue-800
+                   focus:ring-4 focus:outline-none focus:ring-blue-300
+                   font-medium rounded-lg text-sm
+                   px-5 py-2.5 text-center dark:bg-blue-600
+                   dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                Validate Refresh Key
+              </UButton>
 
 
-            <UButton
-                @click="refreshSessionKey()"
-                class="w-full h-full text-white place-content-center
-                 basis-1/5 bg-blue-700 hover:bg-blue-800
-                 focus:ring-4 focus:outline-none focus:ring-blue-300
-                 font-medium rounded-lg text-sm
-                 px-5 py-2.5 text-center dark:bg-blue-600
-                 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            >
-              Refresh Session Key
-            </UButton>
+              <UButton
+                  @click="refreshSessionKey()"
+                  class="w-full h-full text-white place-content-center
+                   basis-1/5 bg-blue-700 hover:bg-blue-800
+                   focus:ring-4 focus:outline-none focus:ring-blue-300
+                   font-medium rounded-lg text-sm
+                   px-5 py-2.5 text-center dark:bg-blue-600
+                   dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                Refresh Session Key
+              </UButton>
 
-            <UButton
-                @click="callProtected()"
-                class="w-full h-full text-white place-content-center
-                 basis-1/5 bg-blue-700 hover:bg-blue-800
-                 focus:ring-4 focus:outline-none focus:ring-blue-300
-                 font-medium rounded-lg text-sm
-                 px-5 py-2.5 text-center dark:bg-blue-600
-                 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            >
-              Call Protected
-            </UButton>
-          </CommonContainerDotted>
+              <UButton
+                  @click="callProtected()"
+                  class="w-full h-full text-white place-content-center
+                   basis-1/5 bg-blue-700 hover:bg-blue-800
+                   focus:ring-4 focus:outline-none focus:ring-blue-300
+                   font-medium rounded-lg text-sm
+                   px-5 py-2.5 text-center dark:bg-blue-600
+                   dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                Call Protected
+              </UButton>
+            </CommonContainerDotted>
+          </ToggleSection>
           <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
             <client-only>
               <UButton
@@ -284,7 +289,7 @@ const updateStatus = () => {
                 Get Notes
               </UButton>
 
-              <ToggleSection title="Notes" >
+              <ToggleSection :title="`Notes (${notes.notesList.length})`" >
                 <div ref="parent" v-if="notes.notesList.length" class="space-y-4">
                   <div  v-for="note in notes.notesList" :key="note.noteid" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
                     <div class="flex justify-between items-center mb-2">
@@ -296,9 +301,6 @@ const updateStatus = () => {
                 </div>
                 <p v-else class="text-center text-gray-500 dark:text-gray-400">No notes available. Click 'Get Notes' to fetch your notes.</p>
               </ToggleSection>
-
-
-
             </client-only>
           </CommonContainerDotted>
           <!-- Text Input -->
