@@ -1,4 +1,29 @@
 
+// Default user structure
+function getDefaultUser() {
+  return {
+    id: -1,
+    name: '',
+    creation: 0,
+    product: '',
+    email: '',
+    register_key: '',
+    registered: 0
+  }
+}
+
+function getDefaultSessionKey() {
+  return {
+    id: -1,
+    sessionKey: ''  ,
+    userid: -1 ,
+    expirationTime: 0,
+    expiration: 0,
+    creationTime: 0,
+    valid: '',
+  }
+}
+
 export const useUserStore =
   defineStore('user', () => {
   const email = ref("");
@@ -6,16 +31,34 @@ export const useUserStore =
   const loginPs = ref("");
   const sessionKey = ref("");
   const sessionKeyExpiration = ref(0);
-  const userData = ref(null);
   const validationStatus = ref(false);
   const authAttempt = ref(0);
   const storageInitialized = ref(false);
   const refreshKey = ref("");
   const hasRefreshKey = ref(false);
   const refreshKeyExpiration = ref(0);
+  const userData = reactive(getDefaultUser());
+  const sessionKeyData = reactive(getDefaultSessionKey());
 
+    /**
+     * Update user data partially or entirely.
+     * Object.assign merges the new data into userData,
+     * preserving reactivity.
+     */
+    function setUserData(newData = {}) {
+      Object.assign(userData, newData)
+      email.value = userData.email;
+    }
 
-  const isLoggedIn = computed(()=>{
+    /**
+     * Reset the user object to the default values.
+     */
+    function resetUserData() {
+      const defaults = getDefaultUser()
+      Object.assign(userData, defaults)
+    }
+
+    const isLoggedIn = computed(()=>{
     return sessionKey.value && sessionKey.value !== "";
   });
 
@@ -40,20 +83,18 @@ export const useUserStore =
 
   }
 
-  function setUserData(data) {
-    userData.value = data;
-    email.value = data.email;
-  }
-
   async function setSessionKey(key) {
     const nuxtApp = useNuxtApp();
     const {salt} = useSecurity();
-
     const storage = useLocalStorage();
+
     if (!storageInitialized){await storage.init();}
+    Object.assign(sessionKeyData, key);
+    Object.assign(sessionKeyData, {expiration: key.expiration});
     sessionKey.value = key.sessionKey;
     sessionKeyExpiration.value = key.expiration;
     await storage.setStorage("us", nuxtApp.$wasm.loader_check(salt(),JSON.stringify(key)));
+    await storage.setStorage("usData", nuxtApp.$wasm.loader_check(salt(),JSON.stringify(sessionKeyData)));
   }
 
   async function loadSessionKey() {
@@ -63,6 +104,7 @@ export const useUserStore =
       const {salt} = useSecurity();
       const storage = useLocalStorage();
       if (!storageInitialized){await storage.init();}
+
       const val = await storage.getStorage("us");
       if (!val || val === "" || val === "null" || val === "undefined") {
         return;
@@ -70,6 +112,13 @@ export const useUserStore =
       const parsedVal = JSON.parse(nuxtApp.$wasm.loader_out(salt(),val));
       sessionKey.value = parsedVal.sessionKey;
       sessionKeyExpiration.value = parsedVal.expirationTime;
+
+      const valData = await storage.getStorage("usData");
+      if (!valData || valData === "" || valData === "null" || valData === "undefined") {
+        return;
+      }
+      const parsedValData = JSON.parse(nuxtApp.$wasm.loader_out(salt(),valData));
+      Object.assign(sessionKeyData, parsedValData);
     }
     catch (e) {
       console.error("Error loading session key: ", e);
@@ -168,12 +217,14 @@ export const useUserStore =
     sessionKey.value = "";
     sessionKeyExpiration.value = 0;
     await clearSessionKey();
+    resetUserData();
     // await clearLocalPassword ();
     // await clearRefreshKey();
   }
 
   return {
-    email, setEmail,
+    email, setEmail, resetUserData,
+    sessionKeyData,
     contextHandle, setContextHandle,
     loginPs, makeLoginPs,
     sessionKey, setSessionKey, loadSessionKey, clearSessionKey,

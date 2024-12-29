@@ -65,14 +65,14 @@
         </NuxtLink>
       </li>
     </ul>
-    <button @click="appStates.toggleShowDebug()">
+    <button @click="userConfig.toggleDebugWindowOpen()">
       Show Debug Panel
     </button>
 
     <DebugPopup
-        :is-open="appStates.showDebug"
+        :is-open="userConfig.debugWindowOpen"
         position="bottom-right"
-        @close="appStates.setShowDebug(false)"
+        @close="userConfig.setDebugWindowOpen(false)"
     />
   </div>
 </template>
@@ -82,8 +82,9 @@
 import {ref} from "vue";
 
 
-const route = useRoute()
-const appStates = appStatesStore()
+const route = useRoute();
+const appStates = appStatesStore();
+const userConfig = useUserConfigStore();
 
 
 const getLinkClasses = (routeName) => {

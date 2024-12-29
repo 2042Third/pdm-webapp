@@ -173,25 +173,39 @@ const updateStatus = () => {
                 Login Status: {{user.isLoggedIn}}
               </text>
 
-              <TextDisplay :content="'Session Key: '+user.sessionKey" />
-
               <text>
-                Session Key Expiration: {{unixToHumanReadableTime(user.sessionKeyExpiration)}}
+                Session Key Expiration: {{unixToHumanReadableTime(user.sessionKeyData.expiration)}}
               </text>
 
               <text>
                 Session Key Validation Status: {{user.validationStatus}}
               </text>
-              <text>
-                Refresh Key : {{user.refreshKey}}
-              </text>
-              <text>
-                Refresh Key Expiration: {{unixToHumanReadableTime(user.refreshKeyExpiration)}}
-              </text>
-              <text>
-                Refresh Key Status: {{user.hasRefreshKey}}
-              </text>
 
+              <ToggleSection title="Refresh Key" >
+                <text>
+                  Refresh Key : {{user.refreshKey}}
+                </text>
+                <br>
+                <text>
+                  Refresh Key Expiration: {{unixToHumanReadableTime(user.refreshKeyExpiration)}}
+                </text>
+                <br>
+                <text>
+                  Refresh Key Status: {{user.hasRefreshKey}}
+                </text>
+              </ToggleSection>
+
+              <ToggleSection title="Data" >
+                <text>
+                  Session Key Data:
+                </text>
+                <TextDisplay :content="JSON.stringify(user.sessionKeyData,null,2)" />
+                <text>
+                  User Data:
+                </text>
+                <TextDisplay :content="JSON.stringify(user.userData,null,2)" />
+
+              </ToggleSection>
 
             </client-only>
           </CommonContainerDotted>
