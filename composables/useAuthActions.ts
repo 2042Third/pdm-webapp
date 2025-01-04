@@ -73,6 +73,53 @@ export const useAuthAction = () => {
     }
   }
 
+  const performSignup = async (url) => {
+    try {
+      const signupData = {
+        email: email.value,
+        password: loginPs.value,
+      };
+
+      const response = await $fetch(url, {
+        method: 'POST',
+        body: signupData,
+        headers: {}
+      });
+
+      console.log('Signup user: ', response);
+      user.setLastSignupResponse(response);
+      return true;
+
+    } catch (error) {
+      console.error('Signup error:', error.response ? error.response._data : error.message);
+      // Handle error (e.g., show error message to user)
+      return false;
+    }
+  }
+  const performSignupVerify = async (url, code) => {
+    try {
+      const signupVerifyData = {
+        email: email.value,
+        code: code,
+      };
+
+      const response = await $fetch(url, {
+        method: 'POST',
+        body: signupVerifyData,
+        headers: {}
+      });
+
+      console.log('Signup verify response: ', response);
+      // user.setLastSignupResponse(response);
+      return true;
+
+    } catch (error) {
+      console.error('Signup verification error:', error.response ? error.response._data : error.message);
+      // Handle error (e.g., show error message to user)
+      return false;
+    }
+  }
+
 
   const performLogout = async (url) => {
     try {
@@ -314,6 +361,8 @@ export const useAuthAction = () => {
   return {
     performLogin,
     performLoginWithRefresh,
+    performSignup,
+    performSignupVerify,
     performLogout,
     performGetUserData,
     performGetUserDataPOST,

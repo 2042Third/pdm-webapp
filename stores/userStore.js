@@ -39,6 +39,11 @@ export const useUserStore =
   const refreshKeyExpiration = ref(0);
   const userData = reactive(getDefaultUser());
   const sessionKeyData = reactive(getDefaultSessionKey());
+  const lastSignupResponse = ref(null);
+
+    function setLastSignupResponse(response) {
+      lastSignupResponse.value = response;
+    }
 
     /**
      * Update user data partially or entirely.
@@ -237,6 +242,7 @@ export const useUserStore =
     authAttempt, addAuthAttempt,
     storageInitialized, setStorageInitialized,
     refreshKey, setRefreshKey, loadRefreshKey, clearRefreshKey,
-    hasRefreshKey, refreshKeyExpiration
+    hasRefreshKey, refreshKeyExpiration,
+    setLastSignupResponse, lastSignupResponse
   };
 });

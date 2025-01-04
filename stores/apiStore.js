@@ -11,6 +11,7 @@ export const useApiStore =
     const api_signin = "/login";
     const api_signout = "/api/user/logout";
     const api_signup = "/signup";
+    const api_signup_verify = "/signup/verify";
     const api_notes = "/api/notes";
     const api_get_user = "/api/user";
     const api_refresh = "/refresh";
@@ -22,6 +23,8 @@ export const useApiStore =
 
     const signin_url = computed(() => (config.public.isProd ? api_production : api_base) + api_signin)
     const signout_url = computed(() => (config.public.isProd ? api_production : api_base) + api_signout)
+    const signup_url = computed(() => (config.public.isProd ? api_production : api_base) + api_signup)
+    const signup_verify_url = computed(() => (config.public.isProd ? api_production : api_base) + api_signup_verify)
     const get_notes_url = computed(() => (config.public.isProd ? api_production : api_base) + api_notes)
     const get_user_url = computed(() => (config.public.isProd ? api_production : api_base) + api_get_user)
     const get_ws_test_url = computed(() => (config.public.isProd ? ws_production : ws_base) + ws_test)
@@ -34,6 +37,8 @@ export const useApiStore =
 
     return {
       signin_url,
+      signup_url,
+      signup_verify_url,
       signout_url,
       get_notes_url,
       get_user_url,

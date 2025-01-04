@@ -27,9 +27,17 @@ const handleCopy = () => {
 <template>
   <ClientOnly>
     <div class="relative">
-      <pre
-          class="max-h-[500px] overflow-auto rounded-lg bg-gray-900 p-4 font-mono text-sm text-white"
-      ><code>{{ formattedContent }}</code></pre>
+      <div class="">
+        <pre
+            class="max-h-[500px] overflow-y-scroll
+           rounded-lg bg-gray-900 p-4 font-mono text-sm text-white
+         whitespace-pre-wrap break-words"
+        >
+        <code>{{ formattedContent }}</code>
+      </pre>
+      </div>
+
+
       <button
           @click="handleCopy"
           class="absolute right-2 top-2 rounded bg-gray-700 px-2 py-1 text-sm text-white hover:bg-gray-600"

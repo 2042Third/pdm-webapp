@@ -146,7 +146,7 @@ const updateStatus = () => {
       <div v-if="isOpen"
            :class="[
              'fixed p-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg border ' +
-              'border-gray-200 dark:border-gray-700 z-40 max-w-prose w-full max-h-[70vh] flex flex-col',
+              'border-gray-200 dark:border-gray-700 z-40 max-w-prose max-h-[70vh] flex flex-col',
              {
                'top-4 left-4': position === 'top-left',
                'top-4 right-4': position === 'top-right',
@@ -166,7 +166,7 @@ const updateStatus = () => {
 
         <!-- Debug Content -->
         <div class="space-y-4 overflow-y-auto flex-1">
-          <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
+          <CommonContainerDotted containerClass="" innerClass="flex flex-col gap-4">
             <ClipBoard :content="user.loginPs"/>
             <client-only>
               <text>
@@ -212,9 +212,9 @@ const updateStatus = () => {
 
 
           <ToggleSection title="Server Calls" >
-            <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
+            <CommonContainerDotted containerClass="w-full" innerClass="flex flex-col gap-4">
               <ToggleSection title="User" >
-                <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
+                <CommonContainerDotted containerClass="w-full" innerClass="flex flex-col gap-4">
                   <UButton
                     @click="getUserData()"
                     class="w-full h-full text-white place-content-center
@@ -289,7 +289,7 @@ const updateStatus = () => {
               </UButton>
             </CommonContainerDotted>
           </ToggleSection>
-          <CommonContainerDotted containerClass="max-w-prose w-full" innerClass="flex flex-col gap-4">
+          <CommonContainerDotted containerClass="w-full" innerClass="flex flex-col gap-4">
             <client-only>
               <UButton
                   @click="getNotes()"
