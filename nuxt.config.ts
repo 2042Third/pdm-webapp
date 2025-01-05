@@ -37,6 +37,7 @@ export default defineNuxtConfig({
       salt: process.env.NUXT_SALT,
       apiBase: process.env.API_BASE || 'http://0.0.0.0/api',
       wsBase: process.env.WS_BASE || 'ws://0.0.0.0',
+      turnstileSiteKey: process.env.NUXT_PUBLIC_CF_TURNSTILE_SITE_KEY || '1x00000000000000000000AA',
       apiProduction: (() => {
         console.log('NUXT_PUBLIC_PDM_BASE_URL:', process.env.NUXT_PUBLIC_PDM_BASE_URL);
         return process.env.NUXT_PUBLIC_PDM_BASE_URL || 'https://yangyi.dev';

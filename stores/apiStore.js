@@ -3,15 +3,11 @@ import { useRuntimeConfig } from 'nuxt/app';
 export const useApiStore =
   defineStore('api', () => {
     const config = useRuntimeConfig();
-    console.log('Runtime config:', config.public);
 
     const api_base = "http://0.0.0.0";
     const ws_base = "ws://0.0.0.0";
     const api_production = config.public.apiProduction;
     const ws_production = config.public.wsProduction;
-
-    console.log('API Production:', api_production);
-    console.log('WS Production:', ws_production);
 
     const api_signin = "/login";
     const api_signout = "/api/user/logout";

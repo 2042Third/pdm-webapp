@@ -73,11 +73,12 @@ export const useAuthAction = () => {
     }
   }
 
-  const performSignup = async (url) => {
+  const performSignup = async (url, turnstileToken) => {
     try {
       const signupData = {
         email: email.value,
         password: loginPs.value,
+        turnstileToken: turnstileToken,
       };
 
       const response = await $fetch(url, {
