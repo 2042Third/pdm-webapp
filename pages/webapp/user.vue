@@ -98,7 +98,9 @@
             v-if="shouldShowSignupVerify"
             class="flex flex-col gap-4">
           <p class="text-sm text-gray-600 dark:text-gray-400">
-            A verification code has been sent to your email. Please enter it below:
+            A verification code has been sent to your email.
+            If you do not see it, check your spam folder.
+            Please enter it below:
           </p>
           <CommonInputS
               id="user-verification-code"
