@@ -25,6 +25,12 @@
             placeholder="Password"
         />
 
+        <div v-if="!user.isLoggedIn" class="flex justify-center">
+          <div id="turnstile-signin-widget" ref="turnstileSigninContainer" class="mt-4"></div>
+        </div>
+        <div v-if="turnstileError" class="text-red-500 text-sm">
+          {{ turnstileError }}
+        </div>
         <!-- Error message -->
         <div
             v-if="showError"
@@ -91,6 +97,9 @@
         <div
             v-if="shouldShowSignupVerify"
             class="flex flex-col gap-4">
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            A verification code has been sent to your email. Please enter it below:
+          </p>
           <CommonInputS
               id="user-verification-code"
               v-model="input_verification"
@@ -100,6 +109,13 @@
               :on-enter="signupVerify"
               placeholder="xxx-xxx"
           />
+          <div
+              v-if="showError"
+              class="text-red-500 text-sm mb-2 transition-all duration-300 ease-in-out"
+              :class="{ 'shake-animation': showError }"
+          >
+            {{verificationError}}
+          </div>
           <UButton
               @click="signupVerify()"
               :loading="isLoading"
@@ -112,7 +128,7 @@
                      dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               :class="{ 'shake-animation': showError }"
           >
-            {{ isLoading ? '...' : 'Submit' }}
+            {{ isLoading ? 'Wait...' : 'Submit' }}
           </UButton>
         </div>
 
@@ -143,7 +159,15 @@
             <div v-if="turnstileError" class="text-red-500 text-sm">
               {{ turnstileError }}
             </div>
+
           </CommonContainerDotted>
+          <div
+              v-if="showError"
+              class="text-red-500 text-sm mb-2 transition-all duration-300 ease-in-out"
+              :class="{ 'shake-animation': showError }"
+          >
+            {{signupError}}
+          </div>
           <UButton
               v-if="!user.isLoggedIn"
               @click="signup()"
@@ -186,6 +210,8 @@ const { unixToHumanReadableTime } = useUtil()
 // Refs for form inputs and state
 const turnstileContainer = ref(null)
 const turnstileWidget = ref(null)
+const turnstileSigninContainer = ref(null)
+const turnstileSigninWidget = ref(null)
 const turnstileToken = ref('')
 const turnstileError = ref('')
 const input_email = ref("")
@@ -193,18 +219,67 @@ const input_password = ref("")
 const input_email_signup = ref("")
 const input_password_signup = ref("")
 const input_verification = ref("")
+const signupError = ref("")
+const verificationError = ref("")
 const shouldShowSignupVerify = ref(false)
 const isLoading = ref(false)
 const showError = ref(false)
 const isSignUpModalOpen = ref(false)
 
+const initSigninTurnstile = () => {
+  try {
+    if (!turnstileSigninContainer.value) {
+      console.error('Turnstile container not found')
+      turnstileError.value = 'Widget container not found'
+      return
+    }
+
+    if (!window?.turnstile) {
+      console.error('Turnstile not loaded')
+      turnstileError.value = 'Verification widget failed to load'
+      return
+    }
+
+    if (!config.public.turnstileSiteKey) {
+      console.error('Turnstile site key not found')
+      turnstileError.value = 'Missing site configuration'
+      return
+    }
+
+    // Clear any existing widgets
+    if (turnstileSigninWidget.value) {
+      window.turnstile.remove(turnstileSigninWidget.value)
+    }
+
+    // Render new widget
+    turnstileSigninWidget.value = window.turnstile.render(turnstileSigninContainer.value, {
+      sitekey: config.public.turnstileSiteKey,
+      callback: (token) => {
+        console.log('Turnstile callback received')
+        turnstileToken.value = token
+        turnstileError.value = ''
+      },
+      'error-callback': () => {
+        console.error('Turnstile verification failed')
+        turnstileError.value = 'Verification failed. Please try again.'
+        turnstileToken.value = ''
+      },
+      'expired-callback': () => {
+        console.log('Turnstile token expired')
+        turnstileToken.value = ''
+        turnstileError.value = 'Verification expired. Please try again.'
+      }
+    })
+
+    // console.log('Turnstile widget rendered:', turnstileSigninWidget.value)
+  } catch (error) {
+    console.error('Error initializing Turnstile:', error)
+    turnstileError.value = 'Failed to initialize verification widget'
+  }
+}
+
 // Define initialization function
 const initTurnstile = () => {
-  console.log('*** Debug: initTurnstile called ***')
-  console.log('Container ref:', turnstileContainer.value)
-  console.log('Window turnstile:', Boolean(window?.turnstile))
-  console.log('Site key:', config.public.turnstileSiteKey)
-  console.log('Initializing Turnstile...')
   try {
     if (!turnstileContainer.value) {
       console.error('Turnstile container not found')
@@ -224,7 +299,7 @@ const initTurnstile = () => {
       return
     }
 
-    console.log('Rendering Turnstile with site key:', config.public.turnstileSiteKey)
+    // console.log('Rendering Turnstile with site key:', config.public.turnstileSiteKey)
 
     // Clear any existing widgets
     if (turnstileWidget.value) {
@@ -251,7 +326,7 @@ const initTurnstile = () => {
       }
     })
 
-    console.log('Turnstile widget rendered:', turnstileWidget.value)
+    // console.log('Turnstile widget rendered:', turnstileWidget.value)
   } catch (error) {
     console.error('Error initializing Turnstile:', error)
     turnstileError.value = 'Failed to initialize verification widget'
@@ -260,16 +335,22 @@ const initTurnstile = () => {
 
 // Watch for modal changes
 watch(isSignUpModalOpen, (newValue) => {
-  console.log('Modal state changed:', newValue)
+  // console.log('Modal state changed:', newValue)
   if (newValue) {
     // Modal opened
     nextTick(() => {
-      console.log('Modal opened, checking turnstile state')
+      // console.log('Modal opened, checking turnstile state')
       if (window?.turnstile && turnstileContainer.value) {
         console.log('Initializing turnstile from watch')
         initTurnstile()
       }
     })
+
+    if (turnstileSigninWidget.value && window?.turnstile) {
+      console.log('Resetting turnstile')
+      window.turnstile.reset(turnstileSigninWidget.value)
+      turnstileToken.value = ''
+    }
   } else {
     // Modal closed
     if (turnstileWidget.value && window?.turnstile) {
@@ -277,6 +358,13 @@ watch(isSignUpModalOpen, (newValue) => {
       window.turnstile.reset(turnstileWidget.value)
       turnstileToken.value = ''
     }
+    // Signin turnstile restart
+    nextTick(() => {
+      if (window?.turnstile && turnstileSigninContainer.value) {
+        console.log('Initializing signin turnstile from watch')
+        initSigninTurnstile()
+      }
+    })
   }
 })
 
@@ -287,12 +375,15 @@ if (typeof window !== 'undefined') {
     if (turnstileContainer.value) {
       initTurnstile()
     }
+    if (turnstileSigninContainer.value) {
+      initSigninTurnstile()
+    }
   }
 }
 
 // Component lifecycle
 onMounted(() => {
-  console.log('Component mounted')
+  // console.log('Component mounted')
   // Check if we're already on the signup modal
   if (isSignUpModalOpen.value) {
     console.log('Modal already open on mount')
@@ -303,6 +394,13 @@ onMounted(() => {
       }
     })
   }
+  nextTick(() => {
+    if (window?.turnstile && turnstileSigninContainer.value) {
+      console.log('Initializing signin turnstile on mount')
+      initSigninTurnstile()
+    }
+  })
+
 })
 
 // Load Turnstile script
@@ -325,9 +423,34 @@ const onTurnstileSuccess = (token) => {
   turnstileToken.value = token
 }
 
-function openSignupModal() {
-  isSignUpModalOpen.value = true
-  // Wait for modal to open and container to be available
+function makeSigninTurnstileInit() {
+  nextTick(async () => {
+    console.log('Modal opened, waiting for container...')
+    // Give the DOM time to update
+    await new Promise(resolve => setTimeout(resolve, 100))
+
+    if (!turnstileSigninContainer.value) {
+      console.log('Container not found after initial delay')
+      // Try again after a longer delay
+      setTimeout(() => {
+        console.log('Retrying turnstile initialization...')
+        if (window?.turnstile && turnstileSigninContainer.value) {
+          initSigninTurnstile()
+        } else {
+          console.log('Still no container or turnstile:', {
+            container: Boolean(turnstileSigninContainer.value),
+            turnstile: Boolean(window?.turnstile)
+          })
+        }
+      }, 500)
+    } else {
+      console.log('Container found immediately')
+      initSigninTurnstile()
+    }
+  })
+}
+
+function makeTurnstileInit() {
   nextTick(async () => {
     console.log('Modal opened, waiting for container...')
     // Give the DOM time to update
@@ -354,6 +477,12 @@ function openSignupModal() {
   })
 }
 
+function openSignupModal() {
+  isSignUpModalOpen.value = true
+  // Wait for modal to open and container to be available
+  makeTurnstileInit()
+}
+
 function createContext() {
   const ctx = nuxtApp.$wasm.create_context(input_password.value);
   console.log("new = " + ctx);
@@ -367,7 +496,7 @@ async function login() {
     user.setEmail(input_email.value);
     createContext();
     user.makeLoginPs(input_password.value);
-    if (await performLoginWithRefresh(api.signin_url)) {
+    if (await performLoginWithRefresh(api.signin_url, turnstileToken.value)) {
     // if (await performLogin(api.signin_url)) {
       if (userConfig.storesPasswordLocally) {
         await user.storeLocalPassword(input_password.value);
@@ -411,12 +540,15 @@ async function signup() {
     // Include turnstile token in your signup request
     const out = await performSignup(api.signup_url, turnstileToken.value);
 
-    if (out) {
+    if (out.isSuccessful) {
       shouldShowSignupVerify.value = true;
     } else {
       showError.value = true;
+      signupError.value = 'Signup error: '+out.data?.message ;
+      console.log("Error happened: "+JSON.stringify(out.data));
       setTimeout(() => {
         showError.value = false;
+        signupError.value = '';
       }, 3000);
     }
   } catch (error) {
@@ -435,7 +567,7 @@ async function signupVerify() {
   isLoading.value = true;
   try {
     const out = await performSignupVerify(api.signup_verify_url, input_verification.value);
-    if (out) {
+    if (out.isSuccessful) {
       // Complete the signup process, close the window
       console.log("Verification successful");
       setTimeout(() => {
@@ -443,8 +575,10 @@ async function signupVerify() {
       }, 1000);
     } else { // show the error message
       showError.value = true;
+      verificationError.value = 'Email verification error: '+out.data?.message;
       setTimeout(() => {
         showError.value = false;
+        verificationError.value = '';
       }, 3000); // Hide error message after 3 seconds
     }
   }
@@ -460,8 +594,16 @@ async function signupVerify() {
 }
 
 async function logout() {
+  isLoading.value = true;
+  input_password.value = "";
+  input_email.value = "";
+  input_email_signup.value = "";
+  input_password_signup.value = "";
+  input_verification.value = "";
+  showError.value = false;
   await performLogout(api.signout_url);
   await user.clearAll();
+  isLoading.value = false;
 }
 
 

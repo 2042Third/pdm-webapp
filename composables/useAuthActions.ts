@@ -38,11 +38,12 @@ export const useAuthAction = () => {
   }
 
 
-  const performLoginWithRefresh = async (url) => {
+  const performLoginWithRefresh = async (url, turnstileToken) => {
     try {
       const loginData = {
         email: email.value,
         password: loginPs.value,
+        turnstileToken: turnstileToken,
       };
 
       const response = await $fetch(url, {
@@ -89,12 +90,18 @@ export const useAuthAction = () => {
 
       console.log('Signup user: ', response);
       user.setLastSignupResponse(response);
-      return true;
+      return {
+        isSuccessful:true,
+        data: response
+      };
 
     } catch (error) {
       console.error('Signup error:', error.response ? error.response._data : error.message);
       // Handle error (e.g., show error message to user)
-      return false;
+      return {
+        isSuccessful:false,
+        data: error.response ? error.response._data : error.message
+      };
     }
   }
   const performSignupVerify = async (url, code) => {
@@ -112,12 +119,18 @@ export const useAuthAction = () => {
 
       console.log('Signup verify response: ', response);
       // user.setLastSignupResponse(response);
-      return true;
+      return {
+        isSuccessful:true,
+        data: response
+      };
 
     } catch (error) {
       console.error('Signup verification error:', error.response ? error.response._data : error.message);
       // Handle error (e.g., show error message to user)
-      return false;
+      return {
+        isSuccessful:false,
+        data: error.response ? error.response._data : error.message
+      };
     }
   }
 
