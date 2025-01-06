@@ -37,7 +37,7 @@
             class="text-red-500 text-sm mb-2 transition-all duration-300 ease-in-out"
             :class="{ 'shake-animation': showError }"
         >
-          Incorrect email or password. Please try again.
+          {{loginError}}
         </div>
 
         <!-- Login and signup buttons -->
@@ -221,6 +221,7 @@ const input_password_signup = ref("")
 const input_verification = ref("")
 const signupError = ref("")
 const verificationError = ref("")
+const loginError = ref("")
 const shouldShowSignupVerify = ref(false)
 const isLoading = ref(false)
 const showError = ref(false)
@@ -496,22 +497,31 @@ async function login() {
     user.setEmail(input_email.value);
     createContext();
     user.makeLoginPs(input_password.value);
-    if (await performLoginWithRefresh(api.signin_url, turnstileToken.value)) {
+    const out = await performLoginWithRefresh(api.signin_url, turnstileToken.value)
+    if (out.isSuccessful) {
     // if (await performLogin(api.signin_url)) {
       if (userConfig.storesPasswordLocally) {
         await user.storeLocalPassword(input_password.value);
       }
     } else {
       showError.value = true;
+      loginError.value = 'Login error: '+out.data?.message;
       setTimeout(() => {
         showError.value = false;
+        loginError.value = '';
+        if (out.data?.error.startsWith("Unverified Email: new verification email sent")) {
+          shouldShowSignupVerify.value = true;
+          isSignUpModalOpen.value = true;
+        }
       }, 3000); // Hide error message after 3 seconds
     }
   } catch (error) {
     console.error('Login failed:', error);
     showError.value = true;
+    loginError.value = 'Login error: '+error;
     setTimeout(() => {
       showError.value = false;
+      loginError.value = '';
     }, 3000); // Hide error message after 3 seconds
   } finally {
     isLoading.value = false;
@@ -603,6 +613,16 @@ async function logout() {
   showError.value = false;
   await performLogout(api.signout_url);
   await user.clearAll();
+  if (turnstileSigninWidget.value && window?.turnstile) {
+    console.log('Resetting turnstile')
+    window.turnstile.reset(turnstileSigninWidget.value)
+    turnstileToken.value = ''
+  }
+  if (window?.turnstile && turnstileSigninContainer.value) {
+    console.log('Initializing signin turnstile from watch')
+    initSigninTurnstile()
+  }
+
   isLoading.value = false;
 }
 

@@ -62,15 +62,24 @@ export const useAuthAction = () => {
           await user.setRefreshKey(response);
           console.log("Received refresh key.");
         }
-        return true;
+        return {
+          isSuccessful:true,
+          data: response
+        };
       } else {
         console.error('Login with Refresh failed: No session key received');
-        return false;
+        return {
+          isSuccessful:false,
+          data: {error: 'No session key received'}
+        };
       }
     } catch (error) {
       console.error('Login with Refresh error:', error.response ? error.response._data : error.message);
       // Handle error (e.g., show error message to user)
-      return false;
+      return {
+        isSuccessful:false,
+        data: error.response ? error.response._data : error.message
+      };
     }
   }
 
