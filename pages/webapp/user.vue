@@ -509,7 +509,7 @@ async function login() {
       setTimeout(() => {
         showError.value = false;
         loginError.value = '';
-        if (out.data?.error.startsWith("Unverified Email: new verification email sent")) {
+        if (out.data?.message.startsWith("Unverified Email: new verification email sent")) {
           shouldShowSignupVerify.value = true;
           isSignUpModalOpen.value = true;
         }
