@@ -15,31 +15,35 @@
     <div ref="menuRef" :class="['right-menu', { 'open': isOpen }, 'md:block']">
       <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
         <div class="sticky top-0 bg-gray-50 dark:bg-gray-800  z-10">
-          <UButtonGroup size="sm" orientation="horizontal">
-            <UButton label="Get Notes" color="white"
-                     :disabled="user.isLoggedIn === false"
-                     @click="getNotes"
-            />
-            <UButton label="New Note" color="white"
-                     :disabled="user.isLoggedIn === false"
-            />
-            <UDropdown :items="sortingItems">
-              <UButton>
-                <IconsSortingUp v-if="notes.sortingOrderDesc" />
-                <IconsSortingDown v-else />
-              </UButton>
+          <client-only>
+            <UButtonGroup size="sm" orientation="horizontal">
+              <UButton label="Get Notes" color="white"
+                       :disabled="!(user.isLoggedIn)"
+                       @click="getNotes"
+              />
+              <UButton  label="New Note" color="white"
+                        :loading="newNoteLoading"
+                        :disabled="newNoteLoading || !(user.isLoggedIn)"
+                        @click="createNote"
+              />
+              <UDropdown :items="sortingItems">
+                <UButton>
+                  <IconsSortingUp v-if="notes.sortingOrderDesc" />
+                  <IconsSortingDown v-else />
+                </UButton>
 
-              <template #item="{ item }">
-                <div :class="sortingItemSelectClass(item.value)">
-                  <span class="truncate">{{ item.label }}</span>
+                <template #item="{ item }">
+                  <div :class="sortingItemSelectClass(item.value)">
+                    <span class="truncate">{{ item.label }}</span>
 
-                  <IconsSortingUp v-if="item.value === notes.sortingBy && notes.sortingOrderDesc" />
-                  <IconsSortingDown v-else-if="item.value === notes.sortingBy && !notes.sortingOrderDesc" />
-                </div>
-              </template>
-            </UDropdown>
+                    <IconsSortingUp v-if="item.value === notes.sortingBy && notes.sortingOrderDesc" />
+                    <IconsSortingDown v-else-if="item.value === notes.sortingBy && !notes.sortingOrderDesc" />
+                  </div>
+                </template>
+              </UDropdown>
 
-          </UButtonGroup>
+            </UButtonGroup>
+          </client-only>
         </div>
         <ul class="space-y-2 font-medium mt-4">
           <li v-for="note in notes.notesList" :key="note.noteid" class="w-full">
@@ -79,8 +83,10 @@ const isMediumScreen = ref(false);
 const menuRef = ref(null);
 const noteEditor = useNoteEditorStore();
 
-const { performGetNotes } = useNotesAction();
+const notesAction = useNotesAction();
 const { unixToHumanReadableTime } = useUtil();
+
+const newNoteLoading = ref(false);
 
 const sortingItems = [
   [{ label: 'Sort by Updated At', value: 'updated', click: () => onSortingClick("updated")}],
@@ -115,13 +121,27 @@ const checkScreenSize = () => {
   }
 }
 
-function getNotes() {
-  performGetNotes(api.get_notes_url);
+async function getNotes() {
+  await notesAction.performGetNotes(api.get_notes_url);
 }
 
 function openNote(noteid) {
   console.log('Opening note:', noteid);
   noteEditor.setOpenNote(notes.notesSet[noteid]);
+}
+
+async function createNote() {
+  try {
+    const out = await notesAction.performCreateNote(api.get_notes_url);
+    if (out) {
+      console.log('New note created:', out.data);
+      openNote(out.noteid);
+    } else {
+      console.log('Failed to create new note: ' + out.data);
+    }
+  } catch (e) {
+    console.error('Failed to create new note:', e);
+  }
 }
 
 onMounted(() => {

@@ -4,8 +4,8 @@ import { ref, computed } from 'vue'
 export const useNotesStore = defineStore('notes', () => {
   const notesArray = ref([]);
   const notesSet = ref({});
-  const sortingByLocal = ref("title"); // title, updated, created, id
-  const sortingOrderDescLocal = ref(true);
+  const sortingByLocal = ref("created"); // title, updated, created, id
+  const sortingOrderDescLocal = ref(false);
 
   const sortingBy = computed({
     get: () => sortingByLocal.value,

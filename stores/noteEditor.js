@@ -4,7 +4,7 @@ export const useNoteEditorStore = defineStore('noteEditor', () => {
   const noteId = ref(null);
   const metadata = ref({
     noteid: -1,
-    userId: -1,
+    userid: -1,  // Changed from userId to userid for consistency
     h: "",
     intgrh: "",
     time: -1,
@@ -12,17 +12,31 @@ export const useNoteEditorStore = defineStore('noteEditor', () => {
     scroll_position: 0,
     deleted: 0,
   });
+  const stagingData = ref({
+    noteid: -1,
+    userid: -1,
+    ue_content: "",
+    ue_heading: "",
+    h: "",
+    intgrh: "",
+    time: -1,
+    update_time: -1,
+    deleted: 0,
+  });
   const scrollPosition = ref(0);
-  const notesOpened = ref({}); // Track scroll positions for each note
+  const notesOpened = ref({});
 
   const setMetadata = (note) => {
-    metadata.value.noteid = note.noteid;
-    metadata.value.userId = note.userId;
-    metadata.value.h = note.h;
-    metadata.value.intgrh = note.intgrh;
-    metadata.value.time = note.time;
-    metadata.value.update_time = note.update_time;
-    metadata.value.deleted = note.deleted;
+    metadata.value = {
+      noteid: note.noteid,
+      userid: note.userid, // Changed from userId to userid
+      h: note.h,
+      intgrh: note.intgrh,
+      time: note.time,
+      update_time: note.update_time,
+      deleted: note.deleted,
+      scroll_position: 0
+    };
 
     if (!notesOpened.value[metadata.value.noteid]) {
       notesOpened.value[metadata.value.noteid] = { scroll_position: 0 };
@@ -30,6 +44,26 @@ export const useNoteEditorStore = defineStore('noteEditor', () => {
     metadata.value.scroll_position = notesOpened.value[metadata.value.noteid].scroll_position;
     scrollPosition.value = metadata.value.scroll_position;
   };
+
+  function updateStagingData() {
+    console.log('Current metadata:', metadata.value);
+    console.log('Current note:', note.value);
+    console.log('Current title:', title.value);
+
+    stagingData.value = {
+      noteid: metadata.value.noteid,
+      userid: metadata.value.userid,
+      ue_content: note.value,
+      ue_heading: title.value,
+      h: metadata.value.h,
+      intgrh: metadata.value.intgrh,
+      time: metadata.value.time,
+      update_time: metadata.value.update_time,
+      deleted: metadata.value.deleted
+    };
+
+    console.log("Staging Data", JSON.stringify(stagingData.value, null,2));
+  }
 
   const setScrollPosition = (position) => {
     if (metadata.value.noteid !== -1) {
@@ -64,6 +98,8 @@ export const useNoteEditorStore = defineStore('noteEditor', () => {
     note,
     title,
     noteId,
+    stagingData,
+    updateStagingData,
     setNote,
     setTitle,
     setNoteId,
