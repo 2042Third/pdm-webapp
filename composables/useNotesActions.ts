@@ -110,6 +110,7 @@ export const useNotesAction = () => {
         intgrh: nuxt.$wasm.get_hash(note.ue_heading),
         heading: nuxt.$wasm.encrypt(user.contextHandle, note.ue_heading),
         content: nuxt.$wasm.encrypt(user.contextHandle, note.ue_content),
+        time: note.time,
         deleted: note.deleted,
       }
       const response = await $fetch(url, {

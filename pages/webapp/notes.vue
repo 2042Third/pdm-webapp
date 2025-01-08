@@ -4,6 +4,7 @@ definePageMeta({
 });
 
 const noteEditor = useNoteEditorStore();
+const noteStore = useNotesStore();
 const user = useUserStore();
 const api = useApiStore();
 const notesAction = useNotesAction();
@@ -32,6 +33,7 @@ async function saveNote() {
     const out = await notesAction.performUpdateNote(api.get_notes_url, noteEditor.stagingData);
     if (out.success) {
       lastSaved.value = new Date().toLocaleString();
+      noteStore.addStagingNoteToList(noteEditor.stagingData); // saving it to the list locally
     }
     else {
       console.error('Error saving note:', out.data);
