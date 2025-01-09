@@ -7,10 +7,6 @@ export const useSecurity = () => {
     const salt = $config.public.salt || 'default-salt'
 
     // Collect browser information
-    const screenRes = `${window.screen.width}x${window.screen.height}`
-    const colorDepth = window.screen.colorDepth
-    const timezoneOffset = new Date().getTimezoneOffset()
-    const plugins = Array.from(navigator.plugins).map(p => p.name).join(',')
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     ctx.textBaseline = 'top'
@@ -20,10 +16,9 @@ export const useSecurity = () => {
     ctx.fillRect(125, 1, 62, 20)
     ctx.fillStyle = '#069'
     ctx.fillText('abcdefghijklmnopqrstuvwxyz', 2, 15)
-    const  canvasFingerprint = canvas.toDataURL()
 
     // Combine all collected data
-    const rawFingerprint = `${navigator.userAgent}|${screenRes}|${colorDepth}|${timezoneOffset}|${plugins}|${canvasFingerprint}`
+    const rawFingerprint = `${navigator.userAgent}|${getGPUInfo()}`
 
     return nuxtApp.$wasm.get_hash(rawFingerprint + salt);
 
