@@ -59,6 +59,7 @@ export const useNoteEditorStore = defineStore('noteEditor', () => {
       intgrh: metadata.value.intgrh,
       time: metadata.value.time,
       update_time: metadata.value.update_time,
+      scroll_position: metadata.value.scroll_position,
       deleted: metadata.value.deleted
     };
 

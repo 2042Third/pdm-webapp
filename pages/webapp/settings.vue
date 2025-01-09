@@ -6,10 +6,10 @@
       <ModalSettings />
     </div>
 
-    <div class="space-y-2">
-      <label class="font-medium">Demos</label>
-      <ModalDemos />
-    </div>
+<!--    <div class="space-y-2">-->
+<!--      <label class="font-medium">Demos</label>-->
+<!--      <ModalDemos />-->
+<!--    </div>-->
 
   </div>
 </template>

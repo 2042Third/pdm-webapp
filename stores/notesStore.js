@@ -49,6 +49,25 @@ export const useNotesStore = defineStore('notes', () => {
     notesSet.value[note.noteid] = note;
   }
 
+  function addStagingNoteToList(note) {
+    console.log("Adding staging note to list: ", note);
+    if (!notesArray.value.includes(note.noteid)) {
+      notesArray.value.push(note.noteid);
+    }
+    notesSet.value[note.noteid] = {
+      noteid: note.noteid,
+      userid: note.userid,
+      content: note.ue_content,
+      heading: note.ue_heading,
+      h: note.h,
+      intgrh: note.intgrh,
+      time: note.time,
+      update_time: note.update_time,
+      scroll_position: note.scroll_position,
+      deleted: note.deleted
+    };
+  }
+
   function setSortingBy(value) {
     sortingByLocal.value = value;
   }
@@ -66,6 +85,7 @@ export const useNotesStore = defineStore('notes', () => {
     notesSet,
     setNotesList,
     addNoteToList,
+    addStagingNoteToList,
     sortingBy,
     setSortingBy,
     sortingOrderDesc,

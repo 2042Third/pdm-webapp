@@ -1,7 +1,7 @@
 
 export const useUserConfigStore =
 defineStore('userConfig', () => {
-  const storesPasswordLocally = ref(false);
+  const storesPasswordLocally = ref(true);
   const debugWindowOpen = ref(false);
 
   function setStoresPasswordLocally(value) {
