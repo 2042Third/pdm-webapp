@@ -37,5 +37,49 @@ export const useSecurity = () => {
     user.setContextHandle(ctx);
   }
 
-  return {salt, createSecureContext};
+  const getGPUInfo = () => {
+    try {
+      const canvas = document.createElement('canvas')
+      const gl = canvas.getContext('webgl2') || canvas.getContext('webgl')
+
+      if (!gl) return {}
+
+      const debugInfo = gl.getExtension('WEBGL_debug_renderer_info')
+      if (!debugInfo) return {}
+
+      // Only get the vendor and renderer - these are hardware-specific
+      return {
+        gpuVendor: gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL),
+        gpuRenderer: gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
+      }
+    } catch (e) {
+      console.warn('GPU fingerprinting failed:', e)
+      return {}
+    }
+  }
+
+  function theFingerprint() {
+    // Only use the most stable hardware characteristics
+    const components = {
+      // CPU/Platform info - these don't change with system state
+      platform: navigator.platform,
+      hardwareConcurrency: navigator.hardwareConcurrency,
+
+      // GPU info - only vendor and renderer, which are hardware-specific
+      ...getGPUInfo()
+    }
+
+    const fingerprint = Object.entries(components)
+      .filter(([_, value]) => value !== undefined && value !== null)
+      .map(([key, value]) => `${key}:${value}`)
+      .sort()
+      .join('|')
+    return fingerprint;
+  }
+
+  return {
+    salt,
+    createSecureContext,
+    theFingerprint,
+  };
 }

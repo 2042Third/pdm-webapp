@@ -188,6 +188,7 @@
         Generated Salt
       </label>
       <ClipBoard :content="generatedSalt" />
+      <ClipBoard :content="deviceInfo" />
     </CommonContainerDotted>
   </div>
 </template>
@@ -247,6 +248,12 @@ const {salt} = useSecurity();
 function generateSalt() {
   generatedSalt.value = salt();
 }
+
+const security = useSecurity();
+const deviceInfo = ref('');
+onMounted(() => {
+  deviceInfo.value = security.theFingerprint();
+});
 
 
 </script>
