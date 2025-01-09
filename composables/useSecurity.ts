@@ -23,7 +23,7 @@ export const useSecurity = () => {
     const canvasFingerprint = canvas.toDataURL()
 
     // Combine all collected data
-    const rawFingerprint = `${navigator.userAgent}|${screenRes}|${colorDepth}|${timezoneOffset}|${plugins}|${canvasFingerprint}`
+    const rawFingerprint =  `${navigator.userAgent}|${screenRes}|${colorDepth}|${timezoneOffset}|${plugins}|${canvasFingerprint}`
 
     return nuxtApp.$wasm.get_hash(rawFingerprint + salt);
 
