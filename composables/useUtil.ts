@@ -11,13 +11,16 @@ export const useUtil = () => {
    * @returns {string} Base64 string
    * */
   function bigintToBase64(bigintValue) {
-    let bigint = BigInt(bigintValue);
+    // Ensure the input is a regular number
+    const num = Number(bigintValue);
 
-    // Convert BigInt to an 8-byte array
+    // Convert number to an 8-byte array
     const bytes = new Uint8Array(8);
+    let remaining = num;
+
     for (let i = 7; i >= 0; i--) {
-      bytes[i] = Number(bigint & 0xffn); // Extract the last byte
-      bigint >>= 8n; // Shift right by 8 bits
+      bytes[i] = remaining & 0xFF;
+      remaining = Math.floor(remaining / 256);
     }
 
     // Encode to Base64
@@ -33,13 +36,13 @@ export const useUtil = () => {
     // Decode Base64 to a byte array
     const bytes = toByteArray(base64Value);
 
-    // Convert the byte array back to BigInt
-    let bigint = 0n;
+    // Convert the byte array back to number
+    let result = 0;
     for (let i = 0; i < bytes.length; i++) {
-      bigint = (bigint << 8n) | BigInt(bytes[i]); // Shift left and add the byte
+      result = (result * 256) + bytes[i];
     }
 
-    return bigint;
+    return result;
   }
 
   /**
