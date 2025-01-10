@@ -2,6 +2,9 @@
 import {resolve} from "path";
 export default defineNuxtConfig({
   vite: {
+    build: {
+      target: 'esnext',
+    },
     devtools: false,
     define: {
       'process.env.DEBUG': 'false',
@@ -52,7 +55,7 @@ export default defineNuxtConfig({
   },
 
   css:[
-    '~/assets/main.scss',
+    '~/assets/main.css',
   ],
 
   devtools: {
