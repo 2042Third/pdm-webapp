@@ -1,3 +1,4 @@
+import { fromByteArray, toByteArray } from 'base64-js';
 export const useUtil = () => {
   const unixToHumanReadableBad = (unixTime) => {
     const date = new Date(unixTime);
@@ -19,11 +20,8 @@ export const useUtil = () => {
       bigint >>= 8n; // Shift right by 8 bits
     }
 
-    // Convert the byte array to a string
-    const binaryString = String.fromCharCode(...bytes);
-
-    // Encode the string to Base64
-    return btoa(binaryString);
+    // Encode to Base64
+    return fromByteArray(bytes);
   }
 
   /**
@@ -32,16 +30,13 @@ export const useUtil = () => {
    * @returns {BigInt} BigInt value
    * */
   function base64ToBigint(base64Value) {
-    // Decode Base64 to a binary string
-    const binaryString = atob(base64Value);
-
-    // Convert the binary string to an 8-byte array
-    const bytes = new Uint8Array([...binaryString].map((char) => char.charCodeAt(0)));
+    // Decode Base64 to a byte array
+    const bytes = toByteArray(base64Value);
 
     // Convert the byte array back to BigInt
     let bigint = 0n;
-    for (const byte of bytes) {
-      bigint = (bigint << 8n) | BigInt(byte); // Shift left and add the byte
+    for (let i = 0; i < bytes.length; i++) {
+      bigint = (bigint << 8n) | BigInt(bytes[i]); // Shift left and add the byte
     }
 
     return bigint;
