@@ -93,19 +93,6 @@ export default defineNuxtConfig({
     },
     storage: 'localStorage'
   },
-
-  // hooks: {
-  //   'build:compiled': async (generator) => {
-  //     const fs = require('fs').promises;
-  //     const path = require('path');
-  //
-  //     const sourceFile = path.join(generator.nuxt.options.buildDir, 'public/wasm/notes.wasm');
-  //     const destinationFile = path.join(generator.nuxt.options.buildDir, 'server/notes.wasm');
-  //
-  //     await fs.copyFile(sourceFile, destinationFile);
-  //     console.log('Copied notes.wasm to server directory');
-  //   },
-  // },
   hooks: {
     'build:compiled': async (generator) => {
       if (process.env.NODE_ENV === 'production') {

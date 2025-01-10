@@ -51,9 +51,9 @@
                     dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer group"
                  @click="openNote(note.noteid)"
             >
-              <h2 class="text-md font-semibold text-gray-800 dark:text-white">Note ID: {{ note.noteid }}</h2>
+              <h2 class="text-md font-semibold text-gray-800 dark:text-white">{{ note.heading||"Untitled" }}</h2>
               <span class="text-xs text-gray-500 dark:text-gray-400">{{ formatDate(note.time) }}</span>
-              <p class="text-gray-600 dark:text-gray-300">{{ note.heading }}</p>
+              <p class="text-xs text-gray-600 dark:text-gray-300">Note ID: {{ bigintToBase64(note.noteid) }}</p>
             </div>
           </li>
         </ul>
@@ -75,6 +75,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 
+const {bigintToBase64} = useUtil();
 const user = useUserStore();
 const api = useApiStore();
 const notes = useNotesStore();

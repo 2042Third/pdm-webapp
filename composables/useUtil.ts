@@ -5,6 +5,49 @@ export const useUtil = () => {
   }
 
   /**
+   * Converts a BigInt to a Base64 string
+   * @param {BigInt} bigintValue - BigInt value to convert
+   * @returns {string} Base64 string
+   * */
+  function bigintToBase64(bigintValue) {
+    let bigint = BigInt(bigintValue);
+
+    // Convert BigInt to an 8-byte array
+    const bytes = new Uint8Array(8);
+    for (let i = 7; i >= 0; i--) {
+      bytes[i] = Number(bigint & 0xffn); // Extract the last byte
+      bigint >>= 8n; // Shift right by 8 bits
+    }
+
+    // Convert the byte array to a string
+    const binaryString = String.fromCharCode(...bytes);
+
+    // Encode the string to Base64
+    return btoa(binaryString);
+  }
+
+  /**
+   * Converts a Base64 string to a BigInt
+   * @param {string} base64Value - Base64 string to convert
+   * @returns {BigInt} BigInt value
+   * */
+  function base64ToBigint(base64Value) {
+    // Decode Base64 to a binary string
+    const binaryString = atob(base64Value);
+
+    // Convert the binary string to an 8-byte array
+    const bytes = new Uint8Array([...binaryString].map((char) => char.charCodeAt(0)));
+
+    // Convert the byte array back to BigInt
+    let bigint = 0n;
+    for (const byte of bytes) {
+      bigint = (bigint << 8n) | BigInt(byte); // Shift left and add the byte
+    }
+
+    return bigint;
+  }
+
+  /**
    * Converts Unix timestamp to human readable format
    * @param {string|number} unixTime - Unix timestamp in seconds or milliseconds
    * @param {object} options - Optional Intl.DateTimeFormat options
@@ -80,5 +123,7 @@ export const useUtil = () => {
     unixToHumanReadableTime,
     unixToHumanReadableBad,
     getRelativeTime,
+    bigintToBase64,
+    base64ToBigint,
   }
 }
