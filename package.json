@@ -21,6 +21,7 @@
     "@pinia/nuxt": "^0.5.1",
     "@stomp/stompjs": "^7.0.0",
     "base64-js": "^1.5.1",
+    "date-fns": "^4.1.0",
     "gsap": "^3.12.5",
     "idb-keyval": "^6.2.1",
     "nuxt": "^3.14.159",

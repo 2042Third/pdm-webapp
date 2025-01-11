@@ -3,7 +3,6 @@ definePageMeta({
   layout: 'note'
 });
 
-const {bigintToBase64} = useUtil();
 const noteEditor = useNoteEditorStore();
 const notesStore = useNotesStore();
 const user = useUserStore();
@@ -138,7 +137,7 @@ onBeforeUnmount(() => {
             <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
               <div class="flex items-center gap-1">
                 <i class="i-heroicons-document-text"></i>
-                <span>Note ID: {{ bigintToBase64(noteEditor.metadata.noteid )}}</span>
+                <span>Note ID: {{ noteEditor.metadata.noteid }}</span>
               </div>
               <div class="flex items-center gap-1">
                 <i class="i-heroicons-clock"></i>

@@ -142,11 +142,46 @@ export const useNotesAction = () => {
       }
     }
   }
+  const performDeleteNote = async (url, req) => {
+    try {
+      console.log('Delete Note:', JSON.stringify(req, null, 2));
+
+      const response = await $fetch(url, {
+        method: 'PUT',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + user.sessionKey,
+        },
+        body: JSON.stringify(req),
+      });
+      console.log('Delete Note response:', response);
+      if (response?.message === "note deleted") {
+        return {
+          success: true,
+          data: response,
+        }
+      }
+      else {
+        console.error('Delete Note failed:', response?.message);
+        return {
+          success: false,
+          data: response,
+        }
+      }
+    } catch (error) {
+      console.error('Delete Note error:', error.response ? error.response._data : error.message);
+      return {
+        success: false,
+        data: error,
+      }
+    }
+  }
 
   return {
     performGetNotes,
     performGetNotesPOST,
     performCreateNote,
     performUpdateNote,
+    performDeleteNote,
   }
 }

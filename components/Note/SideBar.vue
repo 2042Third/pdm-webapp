@@ -1,5 +1,6 @@
 <template>
   <div class="right-menu-container">
+    <!-- Toggle button remains the same -->
     <button @click="toggleMenu"
             type="button"
             class="toggle-menu-button inline-flex flex-row items-center gap-4 p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg
@@ -14,19 +15,28 @@
 
     <div ref="menuRef" :class="['right-menu', { 'open': isOpen }, 'md:block']">
       <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-        <div class="sticky top-0 bg-gray-50 dark:bg-gray-800  z-10">
+        <!-- Top controls section -->
+        <div class="sticky top-0 bg-gray-50 dark:bg-gray-800 z-10 pb-4 border-b dark:border-gray-700">
           <client-only>
-            <UButtonGroup size="sm" orientation="horizontal">
-              <UButton label="Get Notes" color="white"
-                       :disabled="!(user.isLoggedIn)"
-                       @click="getNotes"
+            <UButtonGroup size="sm" orientation="horizontal" class="w-full">
+              <UButton
+                  label="Get Notes"
+                  color="white"
+                  :disabled="!user.isLoggedIn"
+                  @click="getNotes"
+                  icon="i-heroicons-arrow-path"
+                  class="flex-1"
               />
-              <UButton  label="New Note" color="white"
-                        :loading="newNoteLoading"
-                        :disabled="newNoteLoading || !(user.isLoggedIn)"
-                        @click="createNote"
+              <UButton
+                  label="New Note"
+                  color="white"
+                  :loading="newNoteLoading"
+                  :disabled="newNoteLoading || !user.isLoggedIn"
+                  @click="createNote"
+                  icon="i-heroicons-plus"
+                  class="flex-1"
               />
-              <UDropdown :items="sortingItems">
+              <UDropdown :items="sortingItems" :popper="{ placement: 'bottom-end' }">
                 <UButton>
                   <IconsSortingUp v-if="notes.sortingOrderDesc" />
                   <IconsSortingDown v-else />
@@ -35,47 +45,67 @@
                 <template #item="{ item }">
                   <div :class="sortingItemSelectClass(item.value)">
                     <span class="truncate">{{ item.label }}</span>
-
                     <IconsSortingUp v-if="item.value === notes.sortingBy && notes.sortingOrderDesc" />
                     <IconsSortingDown v-else-if="item.value === notes.sortingBy && !notes.sortingOrderDesc" />
                   </div>
                 </template>
               </UDropdown>
-
             </UButtonGroup>
           </client-only>
         </div>
+
+        <!-- Notes list -->
         <ul class="space-y-2 font-medium mt-4">
-          <li v-for="note in notes.notesList" :key="note.noteid" class="w-full">
-            <div class="flex flex-col items-start gap-1 p-2 text-gray-900 rounded-lg
-                    dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer group"
-                 @click="openNote(note.noteid)"
-            >
-              <h2 class="text-md font-semibold text-gray-800 dark:text-white">{{ note.heading||"Untitled" }}</h2>
-              <span class="text-xs text-gray-500 dark:text-gray-400">{{ formatDate(note.time) }}</span>
-              <p class="text-xs text-gray-600 dark:text-gray-300">Note ID: {{ bigintToBase64(note.noteid) }}</p>
+          <li v-for="note in notes.notesList"
+              :key="note.noteid"
+              class="w-full group relative">
+            <!-- Note item -->
+            <div class="flex flex-row items-start justify-between p-3 text-gray-900 rounded-lg
+                        dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                 @click="openNote(note.noteid)">
+              <div class="flex flex-col gap-1 flex-1 min-w-0">
+                <h2 class="text-md font-semibold text-gray-800 dark:text-white truncate">
+                  {{ note.heading || "Untitled" }}
+                </h2>
+                <span class="text-xs text-gray-500 dark:text-gray-400">
+                  {{ formatDateRelative(note.time) }}
+                </span>
+              </div>
+
+              <!-- Note actions menu -->
+              <UDropdown
+                  :items="getNoteActions(note)"
+                  :popper="{ placement: 'bottom-end' }"
+                  @click.stop
+              >
+                <UButton
+                    color="gray"
+                    variant="ghost"
+                    icon="i-heroicons-ellipsis-vertical"
+                    class="opacity-0 group-hover:opacity-100"
+                />
+              </UDropdown>
             </div>
           </li>
         </ul>
       </div>
     </div>
 
-    <div :class="['content-wrapper  flex-grow', { 'md:mr-64': isOpen }]">
+    <div :class="['content-wrapper flex-grow', { 'md:mr-64': isOpen }]">
       <div class="p-4 h-full border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
         <slot />
       </div>
       <Transition name="fade">
-        <CommonMatteOverlay  v-if="isOpen" @click="toggleMenu" />
+        <CommonMatteOverlay v-if="isOpen" @click="toggleMenu" />
       </Transition>
     </div>
-
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import { formatDistanceToNow } from 'date-fns';
 
-const {bigintToBase64} = useUtil();
 const user = useUserStore();
 const api = useApiStore();
 const notes = useNotesStore();
@@ -95,6 +125,61 @@ const sortingItems = [
   [{ label: 'Sort by Title', value: 'title', click: () => onSortingClick("title")}],
   [{ label: 'Sort by Note Id', value: 'noteid', click: () => onSortingClick('noteid') }],
 ];
+
+// Note actions menu generator
+const getNoteActions = (note) => [
+  [{
+    label: 'Rename',
+    icon: 'i-heroicons-pencil',
+    click: () => renameNote(note)
+  }],
+  [{
+    label: 'Duplicate',
+    icon: 'i-heroicons-document-duplicate',
+    click: () => duplicateNote(note)
+  }],
+  [{
+    label: 'Copy Note ID',
+    icon: 'i-heroicons-document-text',
+    click: () => copyNoteId(note)
+  }],
+  [{
+    label: 'Delete',
+    icon: 'i-heroicons-trash',
+    class: 'text-red-500 dark:text-red-400',
+    click: () => deleteNote(note)
+  }]
+];
+
+// Note actions
+async function renameNote(note) {
+  // Implement rename logic
+}
+
+async function duplicateNote(note) {
+  // Implement duplicate logic
+}
+
+function copyNoteId(note) {
+  navigator.clipboard.writeText(note.noteid);
+}
+
+async function deleteNote(note) {
+  const out = await notesAction.performDeleteNote(api.get_notes_url, {
+    noteid: note.noteid,
+    deletePermanently: false,
+  });
+  if (out) {
+    console.log('Note deleted:', note.noteid);
+  } else {
+    console.error('Failed to delete note:', note.noteid);
+  }
+}
+
+// Format date to relative time
+function formatDateRelative(timestamp) {
+  return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
+}
 
 function onSortingClick(itm) {
   console.log("[NoteSideBar] Sorting by clicked:", itm);
@@ -154,27 +239,32 @@ onUnmounted(() => {
   window.removeEventListener('resize', checkScreenSize)
 })
 
-const sortingItemSelectClass = computed(() => (itm) => {
-  const selectedClasses = "bg-gray-100 dark:bg-gray-700";
-  const normal = "flex flex-row items-center gap-4 p-2 text-gray-900 rounded-lg dark:text-white group";
-  return {
-    [normal]: true,
-    [selectedClasses]: notes.sortingBy === itm
-  };
-});
+// const sortingItemSelectClass = computed(() => (itm) => {
+//   const selectedClasses = "bg-gray-100 dark:bg-gray-700";
+//   const normal = "flex flex-row items-center gap-4 p-2 text-gray-900 rounded-lg dark:text-white group";
+//   return {
+//     [normal]: true,
+//     [selectedClasses]: notes.sortingBy === itm
+//   };
+// });
+const sortingItemSelectClass = computed(() => (itm) => ({
+  'flex flex-row items-center gap-4 p-2 text-gray-900 rounded-lg dark:text-white group': true,
+  'bg-gray-100 dark:bg-gray-700': notes.sortingBy === itm
+}));
 
 </script>
 
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s ease;
+  transition: opacity 0.3s ease;
 }
 
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
 }
+
 .right-menu-container {
   position: relative;
   height: 100%;
@@ -184,8 +274,8 @@ const sortingItemSelectClass = computed(() => (itm) => {
 .right-menu {
   position: fixed;
   top: 0;
-  right: -256px; /* 16rem = 256px */
-  width: 256px; /* 16rem = 256px */
+  right: -256px;
+  width: 256px;
   height: 100vh;
   transition: right 0.3s ease-in-out;
   z-index: 30;
@@ -198,7 +288,7 @@ const sortingItemSelectClass = computed(() => (itm) => {
 .content-wrapper {
   transition: margin-right 0.3s ease-in-out;
   height: 100%;
-  padding: 1rem; /* Add padding to match the left sidebar layout */
+  padding: 1rem;
 }
 
 @media (min-width: 768px) {
@@ -208,14 +298,14 @@ const sortingItemSelectClass = computed(() => (itm) => {
 
   .content-wrapper {
     margin-right: 256px;
-
     transition: margin-right 0.3s ease-in-out;
   }
 
   .content-wrapper.mr-64 {
-    margin-left: 256px; /* 16rem = 256px */
+    margin-right: 256px;
   }
 }
+
 .toggle-menu-button {
   position: fixed;
   top: 1rem;
